@@ -1,3 +1,4 @@
+
 import { motion } from 'framer-motion';
 import { Tile, HitAccuracy } from '@/types/game';
 import { useState, useRef, useEffect } from 'react';
@@ -15,6 +16,7 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
   const [status, setStatus] = useState<'falling' | 'hit' | 'missed'>('falling');
   const tileRef = useRef<HTMLDivElement>(null);
   const hasBeenMissedRef = useRef(false);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   
   const startPosition = -20; // Start above screen
   const endPosition = window.innerHeight - 100; // End at bottom of viewport
