@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from 'react';
 import ReactPlayer from 'react-player/youtube';
 import GameLane from './GameLane';
@@ -188,12 +189,10 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
           onReady={handlePlayerReady}
           onError={handlePlayerError}
           config={{
-            youtube: {
-              playerVars: {
-                start: 0,
-                disablekb: 1,
-              },
-            },
+            playerVars: {
+              start: 0,
+              disablekb: 1,
+            }
           }}
         />
       </div>
