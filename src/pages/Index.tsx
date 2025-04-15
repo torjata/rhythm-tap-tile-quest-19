@@ -18,18 +18,47 @@ const Index = () => {
   const generateDecorations = () => {
     const decorations = [];
     
-    // Add animated stars
-    for (let i = 0; i < 16; i++) {
-      const size = Math.random() * 10 + 5;
+    // Add floating Japanese characters
+    for (let i = 0; i < 12; i++) {
+      const size = Math.random() * 30 + 20;
+      const char = "ビコーズシャイン"[Math.floor(Math.random() * 7)];
+      decorations.push(
+        <motion.div
+          key={`char-${i}`}
+          className="absolute text-[#C5F82A] opacity-10 font-bold"
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: [0.1, 0.2, 0.1],
+            y: [0, -20, 0],
+            rotate: [0, 10, 0]
+          }}
+          transition={{ 
+            duration: Math.random() * 4 + 3,
+            repeat: Infinity,
+            delay: Math.random() * 2
+          }}
+          style={{
+            fontSize: `${size}px`,
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+          }}
+        >
+          {char}
+        </motion.div>
+      );
+    }
+
+    // Add stars and sparkles matching the poster
+    for (let i = 0; i < 10; i++) {
       decorations.push(
         <motion.div
           key={`star-${i}`}
-          className="star"
-          initial={{ opacity: 0 }}
+          className={`absolute ${i % 2 === 0 ? 'text-[#1EAEDB]' : 'text-[#ff6e3c]'}`}
+          initial={{ opacity: 0, scale: 0 }}
           animate={{ 
-            opacity: [0.3, 0.8, 0.3],
+            opacity: [0.4, 1, 0.4],
             scale: [0.8, 1.2, 0.8],
-            rotate: [0, 45, 0]
+            rotate: [0, 180, 0]
           }}
           transition={{ 
             duration: Math.random() * 3 + 2,
@@ -39,91 +68,10 @@ const Index = () => {
           style={{
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
-            width: size,
-            height: size
           }}
-        />
-      );
-    }
-    
-    // Add blue dots with pulse animation
-    for (let i = 0; i < 14; i++) {
-      const size = Math.random() * 8 + 5;
-      decorations.push(
-        <motion.div
-          key={`blue-dot-${i}`}
-          className="dot dot-blue"
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: [0, 0.8, 0],
-            scale: [0.6, 1.2, 0.6]
-          }}
-          transition={{ 
-            duration: Math.random() * 4 + 3,
-            repeat: Infinity,
-            delay: Math.random() * 3
-          }}
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            width: size,
-            height: size
-          }}
-        />
-      );
-    }
-    
-    // Add orange dots with float animation
-    for (let i = 0; i < 12; i++) {
-      const size = Math.random() * 8 + 5;
-      decorations.push(
-        <motion.div
-          key={`orange-dot-${i}`}
-          className="dot dot-orange"
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: [0, 0.8, 0],
-            y: [0, -20, 0]
-          }}
-          transition={{ 
-            duration: Math.random() * 5 + 3,
-            repeat: Infinity,
-            delay: Math.random() * 2
-          }}
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            width: size,
-            height: size
-          }}
-        />
-      );
-    }
-    
-    // Add green dots
-    for (let i = 0; i < 10; i++) {
-      const size = Math.random() * 8 + 5;
-      decorations.push(
-        <motion.div
-          key={`green-dot-${i}`}
-          className="dot dot-green"
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: [0, 0.7, 0],
-            scale: [1, 1.3, 1]
-          }}
-          transition={{ 
-            duration: Math.random() * 4 + 3,
-            repeat: Infinity,
-            delay: Math.random() * 2
-          }}
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            width: size,
-            height: size
-          }}
-        />
+        >
+          ✦
+        </motion.div>
       );
     }
     
@@ -139,6 +87,9 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
+          {/* Background decorations */}
+          {generateDecorations()}
+          
           {/* Japanese characters in green with floating animation */}
           <motion.h2
             className="text-[#C5F82A] font-bold text-4xl mb-2 tracking-wider"

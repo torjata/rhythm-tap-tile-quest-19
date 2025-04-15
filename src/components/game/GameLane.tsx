@@ -116,7 +116,6 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
       className="lane relative h-full" 
       style={{ width: `${width}px` }}
       onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
@@ -134,50 +133,15 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
           />
         ))}
       </AnimatePresence>
-      
-      {/* Swipe trails */}
-      {swipeTrails.map(trail => (
-        <motion.div
-          key={trail.id}
-          className="swipe-trail"
-          style={{
-            position: 'absolute',
-            left: trail.x,
-            top: trail.y,
-            width: `${trail.width}px`,
-            transform: `translate(-50%, -50%) rotate(${trail.rotation}deg) translateX(${trail.width / 2}px)`,
-            transformOrigin: 'left center',
-          }}
-          initial={{ opacity: 0.8 }}
-          animate={{ opacity: 0 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-        />
-      ))}
-      
-      {/* Interactive tap area with gradient effect when pressed */}
-      <div 
-        className={`absolute bottom-0 w-full h-20 tap-area ${isPressed ? 'active' : ''}`}
-        style={{
-          background: isPressed 
-            ? 'linear-gradient(to bottom, rgba(197, 248, 42, 0.1), rgba(197, 248, 42, 0.4))'
-            : 'rgba(255, 255, 255, 0.1)',
-          borderTop: '2px solid rgba(197, 248, 42, 0.3)',
-          transition: 'background-color 0.15s ease-out',
+
+      <motion.div 
+        className={`absolute inset-0 z-0 ${isPressed ? 'bg-gradient-to-b from-transparent to-[#C5F82A]/10' : ''}`}
+        animate={{
+          opacity: isPressed ? 1 : 0
         }}
-      >
-        <motion.div 
-          className="w-16 h-6 mx-auto rounded-full"
-          animate={{
-            backgroundColor: isPressed 
-              ? 'rgba(197, 248, 42, 0.4)'
-              : 'rgba(197, 248, 42, 0.1)'
-          }}
-          transition={{ duration: 0.2 }}
-        />
-      </div>
-      
-      {/* Hit effects */}
+        transition={{ duration: 0.15 }}
+      />
+
       <AnimatePresence>
         {hitEffects.map(effect => (
           <motion.div
@@ -205,6 +169,27 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
           </motion.div>
         ))}
       </AnimatePresence>
+
+      <div 
+        className={`absolute bottom-0 w-full h-20 tap-area ${isPressed ? 'active' : ''}`}
+        style={{
+          background: isPressed 
+            ? 'linear-gradient(to bottom, rgba(197, 248, 42, 0.05), rgba(197, 248, 42, 0.2))'
+            : 'transparent',
+          borderTop: '2px solid rgba(197, 248, 42, 0.3)',
+          transition: 'all 0.15s ease-out',
+        }}
+      >
+        <motion.div 
+          className="w-16 h-6 mx-auto rounded-full"
+          animate={{
+            backgroundColor: isPressed 
+              ? 'rgba(197, 248, 42, 0.4)'
+              : 'rgba(197, 248, 42, 0.1)'
+          }}
+          transition={{ duration: 0.2 }}
+        />
+      </div>
     </div>
   );
 };

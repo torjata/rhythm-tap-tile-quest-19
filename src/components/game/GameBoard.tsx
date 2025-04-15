@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from 'react';
 import ReactPlayer from 'react-player/youtube';
 import GameLane from './GameLane';
@@ -302,7 +301,7 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center relative">
+    <div className="w-full h-full flex flex-col items-center relative bg-white">
       <div className="invisible absolute" style={{ width: '1px', height: '1px', overflow: 'hidden' }}>
         <ReactPlayer
           ref={playerRef}
@@ -361,7 +360,7 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
       {/* Main game board */}
       <div 
         ref={gameBoardRef} 
-        className="w-full flex-grow relative bg-gradient-to-b from-white to-blue-50"
+        className="w-full flex-grow relative bg-white"
         style={{ height: `${boardHeight}px` }}
       >
         {/* Decorative elements */}
