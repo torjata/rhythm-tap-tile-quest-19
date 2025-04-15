@@ -6,7 +6,8 @@ import { BeatMap, HitAccuracy } from '@/types/game';
 import { useGameStore } from '@/store/gameStore';
 import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Loader, Home, Star, PlayCircle, Trophy, RotateCcw } from 'lucide-react';
+import { Home, Star, PlayCircle, Trophy, RotateCcw } from 'lucide-react';
+import GameNotification from './GameNotification';
 
 interface GameBoardProps {
   beatmap: BeatMap;
@@ -23,6 +24,7 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);
   const [gameEnded, setGameEnded] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const isMobile = useIsMobile();
   
   const {
@@ -46,6 +48,30 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
     incrementMiss,
     resetGame,
   } = useGameStore();
+
+  // Simulate loading progress
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (isLoading) {
+      setLoadingProgress(0);
+      
+      timer = setInterval(() => {
+        setLoadingProgress(prev => {
+          const newProgress = prev + 5;
+          if (newProgress >= 100) {
+            clearInterval(timer);
+            return 100;
+          }
+          return newProgress;
+        });
+      }, 50);
+    }
+    
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [isLoading]);
 
   useEffect(() => {
     const calculateDimensions = () => {
@@ -159,15 +185,23 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
     // Add stars
     for (let i = 0; i < 8; i++) {
       decorations.push(
-        <div 
+        <motion.div 
           key={`star-${i}`}
           className="star"
+          animate={{ 
+            scale: [0.8, 1.2, 0.8], 
+            opacity: [0.3, 0.8, 0.3] 
+          }}
+          transition={{ 
+            repeat: Infinity, 
+            duration: Math.random() * 3 + 2,
+            delay: Math.random() * 3
+          }}
           style={{
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
             width: `${Math.random() * 10 + 5}px`,
             height: `${Math.random() * 10 + 5}px`,
-            animationDelay: `${Math.random() * 3}s`
           }}
         />
       );
@@ -176,9 +210,16 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
     // Add dots
     for (let i = 0; i < 8; i++) {
       decorations.push(
-        <div 
+        <motion.div 
           key={`blue-dot-${i}`}
           className="dot dot-blue"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0.2, 0.8, 0.2] }}
+          transition={{ 
+            repeat: Infinity,
+            duration: Math.random() * 4 + 3,
+            delay: Math.random() * 2
+          }}
           style={{
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
@@ -189,9 +230,36 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
       );
       
       decorations.push(
-        <div 
+        <motion.div 
           key={`orange-dot-${i}`}
           className="dot dot-orange"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0.2, 0.6, 0.2] }}
+          transition={{ 
+            repeat: Infinity,
+            duration: Math.random() * 4 + 3,
+            delay: Math.random() * 2 + 1
+          }}
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            width: `${Math.random() * 8 + 5}px`,
+            height: `${Math.random() * 8 + 5}px`,
+          }}
+        />
+      );
+
+      decorations.push(
+        <motion.div 
+          key={`green-dot-${i}`}
+          className="dot dot-green"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0.2, 0.7, 0.2] }}
+          transition={{ 
+            repeat: Infinity,
+            duration: Math.random() * 4 + 3,
+            delay: Math.random() * 2 + 0.5
+          }}
           style={{
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
@@ -228,6 +296,11 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
     return 'F';
   };
 
+  const getGradeClass = () => {
+    const grade = getGrade();
+    return `grade-${grade.toLowerCase()}`;
+  };
+
   return (
     <div className="w-full h-full flex flex-col items-center relative">
       <div className="invisible absolute" style={{ width: '1px', height: '1px', overflow: 'hidden' }}>
@@ -249,21 +322,28 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
         />
       </div>
       
+      {/* Game notification component */}
+      <GameNotification />
+      
       {/* Game information top bar */}
       <div className="game-top-bar w-full py-3 px-4 flex justify-between items-center z-10">
         <button 
           onClick={handleBackToMenu}
-          className="rounded-full p-2 bg-white shadow-md"
+          className="rounded-full p-2 bg-white shadow-md hover:bg-gray-100 active:bg-gray-200 transition-colors"
         >
           <Home size={20} className="text-gray-700" />
         </button>
         
         <div className="flex gap-2 items-center">
-          <div className="bg-white px-3 py-1 rounded-full shadow-md">
+          <motion.div 
+            className="bg-white px-3 py-1 rounded-full shadow-md"
+            animate={{ scale: [1, 1.03, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
             <span className="text-sm font-bold text-gray-700">
               Score: {Math.floor(score)}
             </span>
-          </div>
+          </motion.div>
           
           <motion.div
             key={combo}
@@ -281,11 +361,11 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
       {/* Main game board */}
       <div 
         ref={gameBoardRef} 
-        className="w-full flex-grow relative bg-white"
+        className="w-full flex-grow relative bg-gradient-to-b from-white to-blue-50"
         style={{ height: `${boardHeight}px` }}
       >
         {/* Decorative elements */}
-        <div className="absolute inset-0 overflow-hidden opacity-10 pointer-events-none">
+        <div className="absolute inset-0 overflow-hidden opacity-30 pointer-events-none">
           {renderDecorations()}
         </div>
         
@@ -296,7 +376,13 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
           </h2>
         </div>
         
-        <div className="hit-line absolute bottom-20 w-full"></div>
+        <motion.div 
+          className="hit-line absolute bottom-20 w-full"
+          animate={{ 
+            boxShadow: ['0 0 8px rgba(197, 248, 42, 0.6)', '0 0 15px rgba(197, 248, 42, 0.8)', '0 0 8px rgba(197, 248, 42, 0.6)']
+          }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        ></motion.div>
         
         <div className="flex h-full">
           {Array.from({ length: COLUMNS }).map((_, index) => (
@@ -338,11 +424,15 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
-              <div className="flex justify-center mb-6">
+              <motion.div 
+                className="flex justify-center mb-6"
+                animate={{ rotate: [0, 5, 0, -5, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
                 <div className="w-20 h-20 bg-[#1EAEDB] rounded-full flex items-center justify-center">
                   <Trophy size={40} className="text-white" />
                 </div>
-              </div>
+              </motion.div>
               
               <h2 className="text-3xl font-bold text-center text-[#1EAEDB] mb-2">GAME CLEAR!</h2>
               <h3 className="text-xl text-center mb-6">{beatmap.title}</h3>
@@ -355,7 +445,7 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
                 
                 <div className="text-center">
                   <p className="text-gray-500 text-sm">GRADE</p>
-                  <p className="text-2xl font-bold">{getGrade()}</p>
+                  <p className={`text-2xl font-bold ${getGradeClass()}`}>{getGrade()}</p>
                 </div>
                 
                 <div className="text-center">
@@ -370,38 +460,51 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
               </div>
               
               <div className="grid grid-cols-3 gap-2 mb-6">
-                <div className="text-center bg-[#C5F82A] bg-opacity-20 rounded-lg py-2">
+                <motion.div 
+                  className="text-center bg-[#C5F82A] bg-opacity-20 rounded-lg py-2"
+                  whileHover={{ scale: 1.05 }}
+                >
                   <p className="text-xs text-gray-600">PERFECT</p>
                   <p className="font-bold">{perfect}</p>
-                </div>
+                </motion.div>
                 
-                <div className="text-center bg-[#1EAEDB] bg-opacity-20 rounded-lg py-2">
+                <motion.div 
+                  className="text-center bg-[#1EAEDB] bg-opacity-20 rounded-lg py-2"
+                  whileHover={{ scale: 1.05 }}
+                >
                   <p className="text-xs text-gray-600">GOOD</p>
                   <p className="font-bold">{good}</p>
-                </div>
+                </motion.div>
                 
-                <div className="text-center bg-[#ff6e3c] bg-opacity-20 rounded-lg py-2">
+                <motion.div 
+                  className="text-center bg-[#ff6e3c] bg-opacity-20 rounded-lg py-2"
+                  whileHover={{ scale: 1.05 }}
+                >
                   <p className="text-xs text-gray-600">MISS</p>
                   <p className="font-bold">{miss}</p>
-                </div>
+                </motion.div>
               </div>
               
               <div className="flex space-x-3">
-                <button 
+                <motion.button 
                   onClick={handleBackToMenu}
                   className="flex-1 py-3 px-4 rounded-full border-2 border-[#1EAEDB] text-[#1EAEDB] font-bold flex items-center justify-center gap-2"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <Home size={18} />
                   HOME
-                </button>
+                </motion.button>
                 
-                <button 
+                <motion.button 
                   onClick={handlePlayAgain}
                   className="flex-1 py-3 px-4 rounded-full bg-[#C5F82A] text-black font-bold flex items-center justify-center gap-2"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <RotateCcw size={18} />
                   PLAY AGAIN
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           </motion.div>
@@ -409,33 +512,58 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
         
         {/* Tutorial overlay */}
         {!isPlaying && showTutorial && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-95">
-            <h3 className="text-2xl font-bold text-[#1EAEDB] mb-8">How to Play</h3>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-white to-blue-50 bg-opacity-95 z-50">
+            <motion.h3 
+              className="text-2xl font-bold text-[#1EAEDB] mb-8"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              How to Play
+            </motion.h3>
             
             <div className="flex space-x-8 mb-10">
-              <div className="flex flex-col items-center">
+              <motion.div 
+                className="flex flex-col items-center"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
                 <div className="w-16 h-16 bg-[#1EAEDB] rounded-md mb-3 flex items-center justify-center">
                   <span className="text-white font-bold">Tap</span>
                 </div>
                 <span className="text-sm text-gray-700">Tap once when<br/>tile reaches line</span>
-              </div>
+              </motion.div>
               
-              <div className="flex flex-col items-center">
+              <motion.div 
+                className="flex flex-col items-center"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
                 <div className="w-16 h-16 bg-[#C5F82A] rounded-md mb-3 flex items-center justify-center">
                   <span className="text-black font-bold">Hold</span>
                 </div>
                 <span className="text-sm text-gray-700">Press & hold<br/>until end of tile</span>
-              </div>
+              </motion.div>
               
-              <div className="flex flex-col items-center">
+              <motion.div 
+                className="flex flex-col items-center"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
                 <div className="w-16 h-16 bg-[#ff6e3c] rounded-md mb-3 flex items-center justify-center">
                   <span className="text-white font-bold">Flick</span>
                 </div>
                 <span className="text-sm text-gray-700">Swipe in the<br/>arrow direction</span>
-              </div>
+              </motion.div>
             </div>
             
             <motion.button
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleStart}
@@ -449,9 +577,34 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
         
         {/* Loading overlay */}
         {isLoading && (
-          <div className="loading-overlay">
-            <div className="spinner"></div>
-            <p className="text-[#1EAEDB] font-bold">Loading music...</p>
+          <div className="loading-overlay bg-gradient-to-b from-white to-blue-50">
+            <motion.div 
+              className="flex flex-col items-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <motion.div 
+                className="text-5xl font-bold mb-8 text-[#1EAEDB]"
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  color: ['#1EAEDB', '#C5F82A', '#1EAEDB'],
+                }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                READY
+              </motion.div>
+              
+              <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <motion.div 
+                  className="h-full bg-[#C5F82A]"
+                  style={{ width: `${loadingProgress}%` }}
+                  initial={{ width: '0%' }}
+                />
+              </div>
+              
+              <p className="text-[#1EAEDB] font-bold mt-4">Loading music...</p>
+            </motion.div>
           </div>
         )}
         

@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GameTile from './GameTile';
 import { Tile, HitAccuracy } from '@/types/game';
@@ -17,6 +17,8 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
   const [activeTiles, setActiveTiles] = useState<Tile[]>([]);
   const [hitEffects, setHitEffects] = useState<{ id: string; accuracy: HitAccuracy }[]>([]);
   const [isPressed, setIsPressed] = useState(false);
+  const [swipeTrails, setSwipeTrails] = useState<{ id: string; x: number; y: number; rotation: number; width: number }[]>([]);
+  const laneRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const visibleTiles = tiles.filter(tile => {
@@ -45,15 +47,66 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
     }
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsPressed(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (laneRef.current) {
+      const touch = e.touches[0];
+      const rect = laneRef.current.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      
+      // Calculate trail angle based on touch movement
+      const movementX = e.touches[0].clientX - e.touches[0].pageX + window.scrollX;
+      const movementY = e.touches[0].clientY - e.touches[0].pageY + window.scrollY;
+      const rotation = Math.atan2(movementY, movementX) * (180 / Math.PI);
+      const trailLength = Math.sqrt(movementX * movementX + movementY * movementY) + 20;
+      
+      const trail = {
+        id: `trail-${Date.now()}`,
+        x,
+        y,
+        rotation,
+        width: trailLength
+      };
+      
+      setSwipeTrails(prev => [...prev, trail]);
+      
+      setTimeout(() => {
+        setSwipeTrails(prev => prev.filter(t => t.id !== trail.id));
+      }, 500);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsPressed(false);
+  };
+
+  const handleMouseDown = () => {
+    setIsPressed(true);
+  };
+  
+  const handleMouseUp = () => {
+    setIsPressed(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPressed(false);
+  };
+
   return (
     <div 
+      ref={laneRef}
       className="lane relative h-full" 
       style={{ width: `${width}px` }}
-      onTouchStart={() => setIsPressed(true)}
-      onTouchEnd={() => setIsPressed(false)}
-      onMouseDown={() => setIsPressed(true)}
-      onMouseUp={() => setIsPressed(false)}
-      onMouseLeave={() => setIsPressed(false)}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
     >
       <AnimatePresence>
         {activeTiles.map(tile => (
@@ -68,16 +121,46 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
         ))}
       </AnimatePresence>
       
-      {/* Interactive tap area */}
+      {/* Swipe trails */}
+      {swipeTrails.map(trail => (
+        <motion.div
+          key={trail.id}
+          className="swipe-trail"
+          style={{
+            position: 'absolute',
+            left: trail.x,
+            top: trail.y,
+            width: `${trail.width}px`,
+            transform: `translate(-50%, -50%) rotate(${trail.rotation}deg) translateX(${trail.width / 2}px)`,
+            transformOrigin: 'left center',
+          }}
+          initial={{ opacity: 0.8 }}
+          animate={{ opacity: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        />
+      ))}
+      
+      {/* Interactive tap area with gradient effect when pressed */}
       <div 
         className={`absolute bottom-0 w-full h-20 tap-area ${isPressed ? 'active' : ''}`}
         style={{
-          background: isPressed ? 'rgba(197, 248, 42, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-          transition: 'background-color 0.1s ease-out',
-          borderTop: '2px solid rgba(197, 248, 42, 0.3)'
+          background: isPressed 
+            ? 'linear-gradient(to bottom, rgba(197, 248, 42, 0.1), rgba(197, 248, 42, 0.4))'
+            : 'rgba(255, 255, 255, 0.1)',
+          borderTop: '2px solid rgba(197, 248, 42, 0.3)',
+          transition: 'background-color 0.15s ease-out',
         }}
       >
-        <div className="w-16 h-6 mx-auto rounded-full bg-[#C5F82A] bg-opacity-10"></div>
+        <motion.div 
+          className="w-16 h-6 mx-auto rounded-full"
+          animate={{
+            backgroundColor: isPressed 
+              ? 'rgba(197, 248, 42, 0.4)'
+              : 'rgba(197, 248, 42, 0.1)'
+          }}
+          transition={{ duration: 0.2 }}
+        />
       </div>
       
       {/* Hit effects */}

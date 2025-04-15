@@ -4,7 +4,7 @@ export type FlickDirection = 'up' | 'down' | 'left' | 'right';
 export type HitAccuracy = 'perfect' | 'good' | 'miss';
 
 export interface GameAction {
-  type: 'perfect' | 'streak';
+  type: 'perfect' | 'good' | 'miss' | 'streak';
   timestamp: number;
   value?: number;
 }

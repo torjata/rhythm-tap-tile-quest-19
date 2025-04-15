@@ -13,6 +13,7 @@ export const useGameStore = create<GameState>((set) => ({
   isPaused: false,
   isGameOver: false,
   currentTime: 0,
+  lastAction: undefined,
   
   setScore: (score) => set({ score }),
   
@@ -36,11 +37,13 @@ export const useGameStore = create<GameState>((set) => ({
   
   incrementGood: () => set((state) => ({ 
     good: state.good + 1,
-    score: state.score + 50 * (1 + state.combo * 0.1)
+    score: state.score + 50 * (1 + state.combo * 0.1),
+    lastAction: { type: 'good', timestamp: Date.now() }
   })),
   
   incrementMiss: () => set((state) => ({ 
-    miss: state.miss + 1 
+    miss: state.miss + 1,
+    lastAction: { type: 'miss', timestamp: Date.now() }
   })),
   
   setIsPlaying: (isPlaying) => set({ isPlaying }),
@@ -62,5 +65,6 @@ export const useGameStore = create<GameState>((set) => ({
     isPaused: false,
     isGameOver: false,
     currentTime: 0,
+    lastAction: undefined,
   })
 }));

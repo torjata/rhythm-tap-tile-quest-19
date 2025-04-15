@@ -19,8 +19,8 @@ const Index = () => {
   const generateDecorations = () => {
     const decorations = [];
     
-    // Add stars
-    for (let i = 0; i < 12; i++) {
+    // Add animated stars
+    for (let i = 0; i < 16; i++) {
       const size = Math.random() * 10 + 5;
       decorations.push(
         <motion.div
@@ -29,7 +29,8 @@ const Index = () => {
           initial={{ opacity: 0 }}
           animate={{ 
             opacity: [0.3, 0.8, 0.3],
-            scale: [0.8, 1.2, 0.8]
+            scale: [0.8, 1.2, 0.8],
+            rotate: [0, 45, 0]
           }}
           transition={{ 
             duration: Math.random() * 3 + 2,
@@ -46,18 +47,22 @@ const Index = () => {
       );
     }
     
-    // Add blue dots
-    for (let i = 0; i < 10; i++) {
+    // Add blue dots with pulse animation
+    for (let i = 0; i < 14; i++) {
       const size = Math.random() * 8 + 5;
       decorations.push(
         <motion.div
           key={`blue-dot-${i}`}
           className="dot dot-blue"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.8 }}
+          animate={{ 
+            opacity: [0, 0.8, 0],
+            scale: [0.6, 1.2, 0.6]
+          }}
           transition={{ 
-            duration: 0.5,
-            delay: Math.random() * 1
+            duration: Math.random() * 4 + 3,
+            repeat: Infinity,
+            delay: Math.random() * 3
           }}
           style={{
             top: `${Math.random() * 100}%`,
@@ -69,18 +74,49 @@ const Index = () => {
       );
     }
     
-    // Add orange dots
-    for (let i = 0; i < 8; i++) {
+    // Add orange dots with float animation
+    for (let i = 0; i < 12; i++) {
       const size = Math.random() * 8 + 5;
       decorations.push(
         <motion.div
           key={`orange-dot-${i}`}
           className="dot dot-orange"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.8 }}
+          animate={{ 
+            opacity: [0, 0.8, 0],
+            y: [0, -20, 0]
+          }}
           transition={{ 
-            duration: 0.5,
-            delay: Math.random() * 1 + 0.5
+            duration: Math.random() * 5 + 3,
+            repeat: Infinity,
+            delay: Math.random() * 2
+          }}
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            width: size,
+            height: size
+          }}
+        />
+      );
+    }
+    
+    // Add green dots
+    for (let i = 0; i < 10; i++) {
+      const size = Math.random() * 8 + 5;
+      decorations.push(
+        <motion.div
+          key={`green-dot-${i}`}
+          className="dot dot-green"
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: [0, 0.7, 0],
+            scale: [1, 1.3, 1]
+          }}
+          transition={{ 
+            duration: Math.random() * 4 + 3,
+            repeat: Infinity,
+            delay: Math.random() * 2
           }}
           style={{
             top: `${Math.random() * 100}%`,
@@ -96,9 +132,47 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
-      {/* Decorative elements */}
-      {generateDecorations()}
+    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {generateDecorations()}
+      </div>
+      
+      {/* Background waves */}
+      <motion.div 
+        className="absolute bottom-0 left-0 right-0 h-40 opacity-10 z-0"
+        style={{ 
+          background: 'linear-gradient(transparent, #1EAEDB)',
+          borderRadius: '100% 100% 0 0'
+        }}
+        animate={{ 
+          y: [0, -10, 0],
+          opacity: [0.1, 0.2, 0.1]
+        }}
+        transition={{ 
+          duration: 5,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      
+      <motion.div 
+        className="absolute bottom-0 left-0 right-0 h-60 opacity-10 z-0"
+        style={{ 
+          background: 'linear-gradient(transparent, #C5F82A)',
+          borderRadius: '100% 100% 0 0',
+        }}
+        animate={{ 
+          y: [0, -15, 0],
+          opacity: [0.1, 0.15, 0.1]
+        }}
+        transition={{ 
+          duration: 7,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
+        }}
+      />
       
       {!gameStarted ? (
         <motion.div 
@@ -107,34 +181,62 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          {/* Japanese characters in green */}
+          {/* Japanese characters in green with floating animation */}
           <motion.h2
             className="text-[#C5F82A] font-bold text-4xl mb-2 tracking-wider"
             initial={{ y: -30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1, duration: 0.5 }}
+            animate={{ 
+              y: 0, 
+              opacity: 1,
+              translateY: [0, -5, 0]
+            }}
+            transition={{ 
+              delay: 0.1, 
+              duration: 0.5,
+              translateY: {
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }
+            }}
           >
             ビコーズ
           </motion.h2>
           
-          {/* Title */}
+          {/* Title with wave animation */}
           <motion.h1 
             className="text-[#1EAEDB] text-5xl md:text-6xl font-bold text-center mb-2 tracking-tight leading-none"
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            BECAUSE OF YOU,
+            <motion.span 
+              animate={{ 
+                color: ['#1EAEDB', '#2BB4DF', '#1EAEDB'],
+              }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              BECAUSE OF YOU,
+            </motion.span>
           </motion.h1>
           
-          {/* Subtitle */}
+          {/* Subtitle with scaling animation */}
           <motion.div
             className="text-6xl md:text-7xl font-bold text-[#1EAEDB] text-center mb-4 tracking-tight leading-none"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
-            <span className="text-[#1EAEDB] font-bold" style={{ fontFamily: 'cursive' }}>I SHINE</span>
+            <motion.span 
+              className="text-[#1EAEDB] font-bold" 
+              style={{ fontFamily: 'cursive' }}
+              animate={{ 
+                textShadow: ['0 0 5px rgba(30, 174, 219, 0)', '0 0 10px rgba(30, 174, 219, 0.5)', '0 0 5px rgba(30, 174, 219, 0)'],
+              }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              I SHINE
+            </motion.span>
           </motion.div>
           
           <motion.div 
@@ -143,35 +245,82 @@ const Index = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
-            <span className="px-4 py-1 border-t border-b border-[#1EAEDB]">JAPANESE VERSION</span>
+            <motion.span 
+              className="px-4 py-1 border-t border-b border-[#1EAEDB]"
+              animate={{ 
+                borderColor: ['rgba(30, 174, 219, 0.5)', 'rgba(30, 174, 219, 1)', 'rgba(30, 174, 219, 0.5)'],
+              }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              JAPANESE VERSION
+            </motion.span>
           </motion.div>
           
-          {/* Image */}
+          {/* Now we'll use an animated gradient background instead of image */}
           <motion.div 
             className="w-full max-w-md rounded-lg overflow-hidden mb-10 relative"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
-            <img 
-              src="/lovable-uploads/69f2a492-c17a-4039-8a48-5ab862e93c3e.png" 
-              alt="BUS - Because of You, I Shine" 
-              className="w-full h-auto"
-            />
-            <div className="absolute inset-0 border-2 border-[#C5F82A] rounded-lg"></div>
+            <motion.div 
+              className="aspect-video w-full rounded-lg flex items-center justify-center"
+              style={{ 
+                background: 'linear-gradient(45deg, #1EAEDB, #C5F82A)',
+                boxShadow: '0 10px 30px rgba(30, 174, 219, 0.3)'
+              }}
+              animate={{ 
+                background: [
+                  'linear-gradient(45deg, #1EAEDB, #C5F82A)',
+                  'linear-gradient(45deg, #C5F82A, #ff6e3c)',
+                  'linear-gradient(45deg, #ff6e3c, #1EAEDB)',
+                  'linear-gradient(45deg, #1EAEDB, #C5F82A)'
+                ]
+              }}
+              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <motion.div 
+                className="text-4xl font-bold text-white"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              >
+                B.U.S
+              </motion.div>
+            </motion.div>
           </motion.div>
           
-          {/* Start button */}
+          {/* Start button with pulse animation */}
           <motion.button
             className="bg-[#C5F82A] text-black font-bold text-2xl px-12 py-5 rounded-full shadow-lg hover:shadow-xl flex items-center gap-3"
             initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
+            animate={{ 
+              y: 0, 
+              opacity: 1,
+              boxShadow: [
+                '0 5px 15px rgba(197, 248, 42, 0.3)',
+                '0 5px 25px rgba(197, 248, 42, 0.6)',
+                '0 5px 15px rgba(197, 248, 42, 0.3)'
+              ]
+            }}
+            transition={{ 
+              delay: 0.7, 
+              duration: 0.5,
+              boxShadow: {
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }
+            }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleStartGame}
           >
-            <PlayCircle size={28} />
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            >
+              <PlayCircle size={28} />
+            </motion.div>
             TAP TO PLAY
           </motion.button>
           
@@ -186,26 +335,35 @@ const Index = () => {
             <p className="text-sm mt-2">Optimized for mobile and tablet devices</p>
             
             <div className="mt-6 flex justify-center space-x-4">
-              <div className="flex flex-col items-center">
+              <motion.div 
+                className="flex flex-col items-center"
+                whileHover={{ scale: 1.1 }}
+              >
                 <div className="w-10 h-10 bg-[#1EAEDB] rounded-md mb-1 flex items-center justify-center">
                   <span className="text-white font-bold">Tap</span>
                 </div>
                 <span className="text-xs">Tap once</span>
-              </div>
+              </motion.div>
               
-              <div className="flex flex-col items-center">
+              <motion.div 
+                className="flex flex-col items-center"
+                whileHover={{ scale: 1.1 }}
+              >
                 <div className="w-10 h-10 bg-[#C5F82A] rounded-md mb-1 flex items-center justify-center">
                   <span className="text-black font-bold">Hold</span>
                 </div>
                 <span className="text-xs">Press & hold</span>
-              </div>
+              </motion.div>
               
-              <div className="flex flex-col items-center">
+              <motion.div 
+                className="flex flex-col items-center"
+                whileHover={{ scale: 1.1 }}
+              >
                 <div className="w-10 h-10 bg-[#ff6e3c] rounded-md mb-1 flex items-center justify-center">
                   <span className="text-white font-bold">Flick</span>
                 </div>
                 <span className="text-xs">Swipe direction</span>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         </motion.div>

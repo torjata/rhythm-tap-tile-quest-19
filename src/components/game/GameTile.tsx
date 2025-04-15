@@ -151,6 +151,19 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
     return 1 - (hitTime / fallDuration);
   };
 
+  const getTileBackground = () => {
+    switch (tile.type) {
+      case 'tap':
+        return 'linear-gradient(to bottom, rgba(30, 174, 219, 1), rgba(30, 174, 219, 0.8))';
+      case 'hold':
+        return 'linear-gradient(to bottom, rgba(197, 248, 42, 1), rgba(197, 248, 42, 0.8))';
+      case 'flick':
+        return 'linear-gradient(to bottom, rgba(255, 110, 60, 1), rgba(255, 110, 60, 0.8))';
+      default:
+        return '';
+    }
+  };
+
   const getTileClassNames = () => {
     const baseClasses = 'tile flex items-center justify-center';
     
@@ -185,9 +198,10 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
         height: getTileHeight(),
         x: 4,
         y: startPosition + (getAnimationProgress() * (endPosition - startPosition)),
-        background: `linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.3))`,
+        background: getTileBackground(),
         borderRadius: '8px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+        border: '2px solid rgba(255,255,255,0.7)'
       }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}

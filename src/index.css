@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -128,8 +129,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.7; box-shadow: 0 0 8px rgba(197, 248, 42, 0.6); }
+  50% { opacity: 1; box-shadow: 0 0 15px rgba(197, 248, 42, 0.8); }
 }
 
 .tile {
@@ -178,21 +179,21 @@
 }
 
 .tile-tap {
-  background-color: #1EAEDB;
-  border: 2px solid #fff;
-  box-shadow: 0 0 8px rgba(30, 174, 219, 0.5);
+  background: linear-gradient(to bottom, #33C3F0, #1EAEDB);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 8px rgba(30, 174, 219, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
 .tile-hold {
-  background-color: #C5F82A;
-  border: 2px solid #fff;
-  box-shadow: 0 0 8px rgba(197, 248, 42, 0.5);
+  background: linear-gradient(to bottom, #D6FF8A, #C5F82A);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 8px rgba(197, 248, 42, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
 .tile-flick {
-  background-color: #ff6e3c;
-  border: 2px solid #fff;
-  box-shadow: 0 0 8px rgba(255, 110, 60, 0.5);
+  background: linear-gradient(to bottom, #FF9E5C, #ff6e3c);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 8px rgba(255, 110, 60, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
 .perfect {
@@ -214,6 +215,10 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+
+.text-shadow-glow {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
 }
 
 .bonus-notification {
@@ -254,6 +259,7 @@
     transparent
   );
   animation: trail-fade 0.5s ease-out forwards;
+  box-shadow: 0 0 5px rgba(197, 248, 42, 0.4);
 }
 
 @keyframes trail-fade {
@@ -288,7 +294,10 @@
 }
 
 .tap-area.active {
-  background-color: rgba(197, 248, 42, 0.2);
+  background: linear-gradient(to bottom, 
+    rgba(197, 248, 42, 0.1), 
+    rgba(197, 248, 42, 0.4)
+  );
   border-top-color: rgba(197, 248, 42, 0.8);
 }
 
@@ -312,19 +321,22 @@
 
 .dot-blue {
   background-color: #1EAEDB;
+  box-shadow: 0 0 10px rgba(30, 174, 219, 0.5);
 }
 
 .dot-orange {
   background-color: #ff6e3c;
+  box-shadow: 0 0 10px rgba(255, 110, 60, 0.5);
 }
 
 .dot-green {
   background-color: #C5F82A;
+  box-shadow: 0 0 10px rgba(197, 248, 42, 0.5);
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.3; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1.2); }
+  0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(45deg); }
 }
 
 .loading-overlay {
@@ -360,7 +372,7 @@
   right: 0;
   bottom: 0;
   z-index: 40;
-  background-color: white;
+  background: linear-gradient(to bottom, white, rgba(240, 249, 255, 1));
   overflow: hidden;
 }
 
@@ -379,6 +391,7 @@
   backdrop-filter: blur(5px);
   border-bottom: 2px solid #C5F82A;
   border-radius: 0 0 20px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .game-logo {
