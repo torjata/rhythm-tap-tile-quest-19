@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import GameBoard from '@/components/game/GameBoard';
 import { busBeatmap } from '@/data/beatmap';
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/store/gameStore';
-import { Fullscreen, PlayCircle } from 'lucide-react';
+import { Home, Star, PlayCircle, Trophy, RotateCcw } from 'lucide-react';
 
 const Index = () => {
   const [gameStarted, setGameStarted] = useState(false);
@@ -132,48 +131,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {generateDecorations()}
-      </div>
-      
-      {/* Background waves */}
-      <motion.div 
-        className="absolute bottom-0 left-0 right-0 h-40 opacity-10 z-0"
-        style={{ 
-          background: 'linear-gradient(transparent, #1EAEDB)',
-          borderRadius: '100% 100% 0 0'
-        }}
-        animate={{ 
-          y: [0, -10, 0],
-          opacity: [0.1, 0.2, 0.1]
-        }}
-        transition={{ 
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      
-      <motion.div 
-        className="absolute bottom-0 left-0 right-0 h-60 opacity-10 z-0"
-        style={{ 
-          background: 'linear-gradient(transparent, #C5F82A)',
-          borderRadius: '100% 100% 0 0',
-        }}
-        animate={{ 
-          y: [0, -15, 0],
-          opacity: [0.1, 0.15, 0.1]
-        }}
-        transition={{ 
-          duration: 7,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1
-        }}
-      />
-      
+    <div className="min-h-screen bg-white relative overflow-hidden">
       {!gameStarted ? (
         <motion.div 
           className="h-screen w-full flex flex-col items-center justify-center p-4 relative z-10"
@@ -210,33 +168,21 @@ const Index = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <motion.span 
-              animate={{ 
-                color: ['#1EAEDB', '#2BB4DF', '#1EAEDB'],
-              }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            >
-              BECAUSE OF YOU,
-            </motion.span>
+            <span>BECAUSE OF YOU,</span>
           </motion.h1>
           
-          {/* Subtitle with scaling animation */}
           <motion.div
             className="text-6xl md:text-7xl font-bold text-[#1EAEDB] text-center mb-4 tracking-tight leading-none"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
-            <motion.span 
+            <span 
               className="text-[#1EAEDB] font-bold" 
               style={{ fontFamily: 'cursive' }}
-              animate={{ 
-                textShadow: ['0 0 5px rgba(30, 174, 219, 0)', '0 0 10px rgba(30, 174, 219, 0.5)', '0 0 5px rgba(30, 174, 219, 0)'],
-              }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
               I SHINE
-            </motion.span>
+            </span>
           </motion.div>
           
           <motion.div 

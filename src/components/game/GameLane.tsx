@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GameTile from './GameTile';
@@ -49,6 +48,9 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setIsPressed(true);
+    if (laneRef.current) {
+      laneRef.current.classList.add('active');
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -82,18 +84,30 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
 
   const handleTouchEnd = () => {
     setIsPressed(false);
+    if (laneRef.current) {
+      laneRef.current.classList.remove('active');
+    }
   };
 
   const handleMouseDown = () => {
     setIsPressed(true);
+    if (laneRef.current) {
+      laneRef.current.classList.add('active');
+    }
   };
   
   const handleMouseUp = () => {
     setIsPressed(false);
+    if (laneRef.current) {
+      laneRef.current.classList.remove('active');
+    }
   };
 
   const handleMouseLeave = () => {
     setIsPressed(false);
+    if (laneRef.current) {
+      laneRef.current.classList.remove('active');
+    }
   };
 
   return (
