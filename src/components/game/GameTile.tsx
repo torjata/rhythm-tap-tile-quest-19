@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { Tile, HitAccuracy } from '@/types/game';
 import { useState, useRef, useEffect } from 'react';
@@ -65,9 +64,22 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
     const touch = e.touches[0];
     const deltaX = touch.clientX - touchStartRef.current.x;
     const deltaY = touch.clientY - touchStartRef.current.y;
-    const minSwipeDistance = 20; // Reduced minimum distance for a swipe to make it easier
+    const minSwipeDistance = 20;
     
     if (Math.abs(deltaX) > minSwipeDistance || Math.abs(deltaY) > minSwipeDistance) {
+      const trailElement = document.createElement('div');
+      trailElement.className = 'swipe-trail';
+      const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+      const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      
+      trailElement.style.width = `${length}px`;
+      trailElement.style.transform = `rotate(${angle}deg)`;
+      trailElement.style.left = `${touchStartRef.current.x}px`;
+      trailElement.style.top = `${touchStartRef.current.y}px`;
+      
+      document.body.appendChild(trailElement);
+      setTimeout(() => trailElement.remove(), 500);
+      
       const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY);
       
       if (isHorizontal) {
@@ -125,15 +137,24 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
         case 'left': Arrow = ArrowLeft; break;
         case 'right': Arrow = ArrowRight; break;
       }
-      return <Arrow className="w-6 h-6 text-white" />;
+      return <Arrow className="w-6 h-6 text-white animate-pulse" />;
     }
     
     if (tile.type === 'tap') {
-      return <div className="w-4 h-4 bg-white rounded-full" />;
+      return (
+        <div className="relative w-4 h-4">
+          <div className="absolute inset-0 bg-white rounded-full animate-ping opacity-75"></div>
+          <div className="relative bg-white rounded-full w-full h-full"></div>
+        </div>
+      );
     }
     
     if (tile.type === 'hold') {
-      return <div className="w-4 h-full bg-white rounded-full opacity-80" />;
+      return (
+        <div className="w-4 h-full bg-gradient-to-b from-white/40 to-white rounded-full">
+          <div className="w-full h-full animate-pulse"></div>
+        </div>
+      );
     }
     
     return null;
@@ -171,7 +192,7 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
   return (
     <motion.div
       ref={tileRef}
-      className={getTileClassNames()}
+      className={`${getTileClassNames()} ${status === 'hit' ? 'hit-animation' : ''}`}
       style={{
         width: laneWidth - 8,
         height: getTileHeight(),
@@ -181,7 +202,11 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
       }}
       animate={
         status === 'hit'
-          ? { opacity: 0, scale: 1.3, transition: { duration: 0.2 } }
+          ? { 
+              opacity: [1, 0],
+              scale: [1, 1.5],
+              filter: ['brightness(1)', 'brightness(1.5)'],
+            }
           : {}
       }
       onTouchStart={handleTouchStart}

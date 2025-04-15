@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from 'react';
 import ReactPlayer from 'react-player/youtube';
 import GameLane from './GameLane';
@@ -84,18 +83,14 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
     };
   }, [isPlaying, isPaused, setCurrentTime]);
 
-  // Check if all tiles have been processed to trigger game over
   useEffect(() => {
     if (!isPlaying || gameEnded) return;
     
     const lastTileTime = Math.max(...beatmap.tiles.map(tile => tile.time));
     
-    // If current time is past the last tile time + 2 seconds, end the game
-    if (currentTime > lastTileTime + 2) {
-      setTimeout(() => {
-        setIsGameOver(true);
-        setGameEnded(true);
-      }, 2000); // 2 second delay before showing game over screen
+    if (currentTime > lastTileTime + 0.5) {
+      setIsGameOver(true);
+      setGameEnded(true);
     }
   }, [currentTime, isPlaying, beatmap.tiles, setIsGameOver, gameEnded]);
 
@@ -105,7 +100,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
     if (playerRef.current) {
       playerRef.current.seekTo(0);
       
-      // Use setTimeout to give a moment for the video to begin loading
       setTimeout(() => {
         setIsPlaying(true);
         setIsLoading(false);
@@ -156,7 +150,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
   const renderDecorations = () => {
     const decorations = [];
     
-    // Add stars
     for (let i = 0; i < 8; i++) {
       decorations.push(
         <div 
@@ -173,7 +166,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
       );
     }
     
-    // Add dots
     for (let i = 0; i < 8; i++) {
       decorations.push(
         <div 
@@ -205,10 +197,8 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
     return decorations;
   };
 
-  // Calculate the total number of notes in the beatmap
   const totalNotes = beatmap.tiles.length;
   
-  // Calculate accuracy percentage
   const calculateAccuracy = () => {
     if (totalNotes === 0) return 0;
     
@@ -216,7 +206,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
     return (weightedSum / totalNotes) * 100;
   };
   
-  // Get letter grade based on accuracy
   const getGrade = () => {
     const accuracy = calculateAccuracy();
     
@@ -249,7 +238,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
         />
       </div>
       
-      {/* Game information top bar */}
       <div className="game-top-bar w-full py-3 px-4 flex justify-between items-center z-10">
         <button 
           onClick={handleBackToMenu}
@@ -278,18 +266,15 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
         </div>
       </div>
       
-      {/* Main game board */}
       <div 
         ref={gameBoardRef} 
         className="w-full flex-grow relative bg-white"
         style={{ height: `${boardHeight}px` }}
       >
-        {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden opacity-10 pointer-events-none">
           {renderDecorations()}
         </div>
         
-        {/* Game title */}
         <div className="absolute top-4 left-0 right-0 text-center pointer-events-none">
           <h2 className="text-lg font-bold text-[#1EAEDB] opacity-40">
             {beatmap.title}
@@ -324,7 +309,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
           ))}
         </div>
         
-        {/* Game over screen */}
         {isGameOver && gameEnded && (
           <motion.div 
             className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-95 z-50"
@@ -407,7 +391,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
           </motion.div>
         )}
         
-        {/* Tutorial overlay */}
         {!isPlaying && showTutorial && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-95">
             <h3 className="text-2xl font-bold text-[#1EAEDB] mb-8">How to Play</h3>
@@ -447,15 +430,17 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
           </div>
         )}
         
-        {/* Loading overlay */}
         {isLoading && (
           <div className="loading-overlay">
-            <div className="spinner"></div>
+            <div className="loading-dots mb-4">
+              <div className="loading-dot"></div>
+              <div className="loading-dot"></div>
+              <div className="loading-dot"></div>
+            </div>
             <p className="text-[#1EAEDB] font-bold">Loading music...</p>
           </div>
         )}
         
-        {/* Start button if not in tutorial or loading */}
         {!isPlaying && !showTutorial && !isLoading && !gameEnded && (
           <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80">
             <motion.button
