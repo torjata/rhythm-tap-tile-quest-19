@@ -283,7 +283,7 @@ const RecordMode: React.FC<RecordModeProps> = ({
       >
         <div className="mb-4 w-full">
           <div className="relative" style={{ paddingTop: '56.25%' }}>
-            <div id="youtube-player" className="absolute inset-0"></div>
+            <div ref={playerRef} id="youtube-player" className="absolute inset-0"></div>
           </div>
         </div>
         
