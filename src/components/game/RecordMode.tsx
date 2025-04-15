@@ -1,9 +1,8 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Tile, TileType, FlickDirection } from '@/types/game';
 import { Button } from '@/components/ui/button';
 import { v4 } from '@/utils/uuid';
-import { Record, StopCircle, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Mic, StopCircle, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface RecordModeProps {
@@ -30,17 +29,14 @@ const RecordMode: React.FC<RecordModeProps> = ({
   const playerRef = useRef<HTMLIFrameElement>(null);
   const playerAPIRef = useRef<any>(null);
   
-  // Setup YouTube API
   useEffect(() => {
     if (!videoId) return;
     
-    // Load YouTube IFrame API
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
     
-    // Initialize player when API is ready
     window.onYouTubeIframeAPIReady = () => {
       playerAPIRef.current = new window.YT.Player('youtube-player', {
         videoId: videoId,
@@ -62,7 +58,6 @@ const RecordMode: React.FC<RecordModeProps> = ({
     };
   }, [videoId]);
   
-  // Update time continuously when playing
   const updateTimeLoop = () => {
     if (playerAPIRef.current && playerAPIRef.current.getCurrentTime) {
       setCurrentTime(playerAPIRef.current.getCurrentTime());
@@ -87,10 +82,9 @@ const RecordMode: React.FC<RecordModeProps> = ({
       playerAPIRef.current.pauseVideo();
     }
     
-    // Finalize any ongoing hold
     if (holdStartTime !== null && activeColumn !== null) {
       const duration = currentTime - holdStartTime;
-      if (duration > 0.2) { // Only register holds that are held for at least 0.2 seconds
+      if (duration > 0.2) {
         const holdTile: Tile = {
           id: v4(),
           type: 'hold',
@@ -106,28 +100,24 @@ const RecordMode: React.FC<RecordModeProps> = ({
       setActiveColumn(null);
     }
     
-    // Notify parent of the recorded tiles
     onTilesRecorded(recordedTiles);
     toast.success(`Recording completed. ${recordedTiles.length} tiles created.`);
   };
   
-  // Handle keydown for recording
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isRecording) return;
     
     let column: number | null = null;
     
-    // Map keys to columns
     switch (e.key) {
       case 'd': column = 0; break;
       case 'f': column = 1; break;
       case 'j': column = 2; break;
       case 'k': column = 3; break;
-      default: return; // Ignore other keys
+      default: return;
     }
     
     if (column !== null) {
-      // Start a potential hold
       if (holdStartTime === null) {
         setHoldStartTime(currentTime);
         setActiveColumn(column);
@@ -135,26 +125,23 @@ const RecordMode: React.FC<RecordModeProps> = ({
     }
   };
   
-  // Handle keyup for recording
   const handleKeyUp = (e: React.KeyboardEvent) => {
     if (!isRecording) return;
     
     let column: number | null = null;
     
-    // Map keys to columns
     switch (e.key) {
       case 'd': column = 0; break;
       case 'f': column = 1; break;
       case 'j': column = 2; break;
       case 'k': column = 3; break;
-      default: return; // Ignore other keys
+      default: return;
     }
     
     if (column !== null && column === activeColumn && holdStartTime !== null) {
       const duration = currentTime - holdStartTime;
       
       if (duration < 0.2) {
-        // Short press = tap
         const tapTile: Tile = {
           id: v4(),
           type: 'tap',
@@ -164,7 +151,6 @@ const RecordMode: React.FC<RecordModeProps> = ({
         
         setRecordedTiles(prev => [...prev, tapTile]);
       } else {
-        // Long press = hold
         const holdTile: Tile = {
           id: v4(),
           type: 'hold',
@@ -181,7 +167,6 @@ const RecordMode: React.FC<RecordModeProps> = ({
     }
   };
   
-  // Handle flick gestures
   const handleFlick = (column: number, direction: FlickDirection) => {
     if (!isRecording) return;
     
@@ -202,10 +187,10 @@ const RecordMode: React.FC<RecordModeProps> = ({
       className="flex flex-col items-center relative" 
       onKeyDown={handleKeyDown} 
       onKeyUp={handleKeyUp}
-      tabIndex={0} // Make the div focusable to capture key events
+      tabIndex={0}
     >
       <div className="mb-4 w-full">
-        <div className="relative" style={{ paddingTop: '56.25%' }}> {/* 16:9 Aspect Ratio */}
+        <div className="relative" style={{ paddingTop: '56.25%' }}>
           <div id="youtube-player" className="absolute inset-0"></div>
         </div>
       </div>
@@ -225,7 +210,7 @@ const RecordMode: React.FC<RecordModeProps> = ({
             className="flex items-center gap-2" 
             onClick={startRecording}
           >
-            <Record size={16} /> Start Recording
+            <Mic size={16} /> Start Recording
           </Button>
         )}
       </div>
@@ -245,7 +230,6 @@ const RecordMode: React.FC<RecordModeProps> = ({
                     const duration = currentTime - holdStartTime;
                     
                     if (duration < 0.2) {
-                      // Tap
                       const tapTile: Tile = {
                         id: v4(),
                         type: 'tap',
@@ -255,7 +239,6 @@ const RecordMode: React.FC<RecordModeProps> = ({
                       
                       setRecordedTiles(prev => [...prev, tapTile]);
                     } else {
-                      // Hold
                       const holdTile: Tile = {
                         id: v4(),
                         type: 'hold',

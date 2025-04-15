@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BeatMap, Tile, TileType, FlickDirection } from "@/types/game";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Trash2, Save, Play, Youtube, FileDown, Edit, Copy, Record } from "lucide-react";
+import { Plus, Trash2, Save, Play, Youtube, FileDown, Edit, Copy, Mic } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
