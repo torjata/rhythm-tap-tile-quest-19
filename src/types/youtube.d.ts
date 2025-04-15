@@ -11,6 +11,7 @@ declare global {
         BUFFERING: number;
         CUED: number;
       };
+      ready: (callback: () => void) => void;
     };
     onYouTubeIframeAPIReady: () => void;
   }
