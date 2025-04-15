@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GameTile from './GameTile';
 import { Tile, HitAccuracy } from '@/types/game';
@@ -16,51 +16,42 @@ interface GameLaneProps {
 const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: GameLaneProps) => {
   const [activeTiles, setActiveTiles] = useState<Tile[]>([]);
   const [hitEffects, setHitEffects] = useState<{ id: string; accuracy: HitAccuracy }[]>([]);
-  const prevTimeRef = useRef(currentTime);
+  const [isPressed, setIsPressed] = useState(false);
 
   useEffect(() => {
-    // Only update tiles if time has actually changed to prevent unnecessary rerenders
-    if (prevTimeRef.current !== currentTime) {
-      prevTimeRef.current = currentTime;
-      
-      // Filter tiles that should be visible based on time
-      const visibleTiles = tiles.filter(tile => {
-        const timeToHit = tile.time - currentTime;
-        return timeToHit > -0.5 && timeToHit < fallDuration;
-      });
-      
-      setActiveTiles(visibleTiles);
-    }
+    const visibleTiles = tiles.filter(tile => {
+      const timeToHit = tile.time - currentTime;
+      return timeToHit > -0.5 && timeToHit < fallDuration;
+    });
+    setActiveTiles(visibleTiles);
   }, [tiles, currentTime, fallDuration]);
 
   const handleHit = (tileId: string, accuracy: HitAccuracy) => {
-    // Add hit effect
     const newHitEffect = { id: tileId, accuracy };
     setHitEffects(prev => [...prev, newHitEffect]);
     
-    // Remove hit effect after animation completes
     setTimeout(() => {
       setHitEffects(prev => prev.filter(effect => effect.id !== tileId));
     }, 1000);
     
-    // Pass hit to parent
     onHit(tileId, accuracy);
   };
 
   const getEffectColor = (accuracy: HitAccuracy) => {
     switch (accuracy) {
-      case 'perfect':
-        return 'rgba(197, 248, 42, 0.8)';
-      case 'good':
-        return 'rgba(30, 174, 219, 0.8)';
-      case 'miss':
-        return 'rgba(255, 110, 60, 0.5)';
+      case 'perfect': return 'rgba(197, 248, 42, 0.8)';
+      case 'good': return 'rgba(30, 174, 219, 0.8)';
+      case 'miss': return 'rgba(255, 110, 60, 0.5)';
     }
   };
 
   return (
-    <div className="lane relative h-full" style={{ width: `${width}px` }}>
-      {/* Display active tiles */}
+    <div 
+      className="lane relative h-full" 
+      style={{ width: `${width}px` }}
+      onTouchStart={() => setIsPressed(true)}
+      onTouchEnd={() => setIsPressed(false)}
+    >
       <AnimatePresence>
         {activeTiles.map(tile => (
           <GameTile
@@ -74,6 +65,18 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
         ))}
       </AnimatePresence>
       
+      {/* Interactive tap area */}
+      <div 
+        className={`absolute bottom-0 w-full h-20 tap-area ${isPressed ? 'active' : ''}`}
+        style={{
+          background: isPressed ? 'rgba(197, 248, 42, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+          transition: 'background-color 0.1s ease-out',
+          borderTop: '2px solid rgba(197, 248, 42, 0.3)'
+        }}
+      >
+        <div className="w-16 h-6 mx-auto rounded-full bg-[#C5F82A] bg-opacity-10"></div>
+      </div>
+      
       {/* Hit effects */}
       <AnimatePresence>
         {hitEffects.map(effect => (
@@ -85,9 +88,8 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
           >
-            {effect.accuracy === 'perfect' ? 'PERFECT' : effect.accuracy === 'good' ? 'GOOD' : 'MISS'}
+            {effect.accuracy.toUpperCase()}
             
-            {/* Visual hit effect */}
             {effect.accuracy !== 'miss' && (
               <motion.div
                 className="hit-effect"

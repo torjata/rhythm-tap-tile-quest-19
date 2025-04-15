@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { Tile, HitAccuracy } from '@/types/game';
 import { useState, useRef, useEffect } from 'react';
@@ -15,19 +14,34 @@ interface GameTileProps {
 const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTileProps) => {
   const [status, setStatus] = useState<'falling' | 'hit' | 'missed'>('falling');
   const tileRef = useRef<HTMLDivElement>(null);
-  const startPosition = -100; // Starting position off-screen
-  const endPosition = 100; // Ending position (make sure it's at the bottom of the lane)
-  const touchStartRef = useRef<{ x: number, y: number } | null>(null);
   const hasBeenMissedRef = useRef(false);
-
+  
+  const startPosition = -20; // Start above screen
+  const endPosition = window.innerHeight - 100; // End at bottom of viewport
+  const hitLinePosition = window.innerHeight - 120; // Hit line position
+  
   useEffect(() => {
-    // This prevents an infinite loop by only triggering the "miss" once
     if (status === 'falling' && hitTime <= -0.3 && !hasBeenMissedRef.current) {
       hasBeenMissedRef.current = true;
       setStatus('missed');
       onHit(tile.id, 'miss');
     }
   }, [hitTime, status, tile.id, onHit]);
+
+  const calculateAccuracy = (time: number): HitAccuracy => {
+    const perfectThreshold = 0.08; // Tighter perfect window
+    const goodThreshold = 0.15; // Tighter good window
+    
+    const absTime = Math.abs(time);
+    
+    if (absTime <= perfectThreshold) {
+      return 'perfect';
+    } else if (absTime <= goodThreshold) {
+      return 'good';
+    } else {
+      return 'miss';
+    }
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (status !== 'falling') return;
@@ -53,7 +67,6 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
     const deltaY = touch.clientY - touchStartRef.current.y;
     const minSwipeDistance = 20; // Reduced minimum distance for a swipe to make it easier
     
-    // Determine swipe direction
     if (Math.abs(deltaX) > minSwipeDistance || Math.abs(deltaY) > minSwipeDistance) {
       const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY);
       
@@ -106,42 +119,41 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
     onHit(tile.id, accuracy);
   };
 
-  const calculateAccuracy = (time: number): HitAccuracy => {
-    const perfectThreshold = 0.15;
-    const goodThreshold = 0.3;
-    
-    const absTime = Math.abs(time);
-    
-    if (absTime <= perfectThreshold) {
-      return 'perfect';
-    } else if (absTime <= goodThreshold) {
-      return 'good';
-    } else {
-      return 'miss';
-    }
-  };
-
   const getTileContent = () => {
     if (tile.type === 'flick') {
+      let Arrow = ArrowUp;
       switch (tile.direction) {
-        case 'up':
-          return <ArrowUp className="w-6 h-6 text-white" />;
-        case 'down':
-          return <ArrowDown className="w-6 h-6 text-white" />;
-        case 'left':
-          return <ArrowLeft className="w-6 h-6 text-white" />;
-        case 'right':
-          return <ArrowRight className="w-6 h-6 text-white" />;
-        default:
-          return null;
+        case 'up': Arrow = ArrowUp; break;
+        case 'down': Arrow = ArrowDown; break;
+        case 'left': Arrow = ArrowLeft; break;
+        case 'right': Arrow = ArrowRight; break;
       }
+      return <Arrow className="w-6 h-6 text-white" />;
     }
     
     if (tile.type === 'tap') {
-      return <div className="w-4 h-4 bg-white rounded-full"></div>;
+      return <div className="w-4 h-4 bg-white rounded-full" />;
+    }
+    
+    if (tile.type === 'hold') {
+      return <div className="w-4 h-full bg-white rounded-full opacity-80" />;
     }
     
     return null;
+  };
+
+  const getTileHeight = () => {
+    if (tile.type === 'hold' && tile.duration) {
+      return Math.max(60, tile.duration * 200); // Increased height multiplier
+    }
+    return 60;
+  };
+
+  const getAnimationProgress = () => {
+    if (hitTime > fallDuration) return 0;
+    if (hitTime <= -0.3) return 1;
+    
+    return 1 - (hitTime / fallDuration);
   };
 
   const getTileClassNames = () => {
@@ -159,23 +171,6 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
     }
   };
 
-  const getTileHeight = () => {
-    if (tile.type === 'hold' && tile.duration) {
-      // Hold notes have height based on duration
-      return Math.max(60, tile.duration * 120);
-    }
-    return 60;
-  };
-
-  const getAnimationProgress = () => {
-    if (hitTime > fallDuration) return 0;
-    if (hitTime <= -0.3) return 1;
-    
-    // This ensures the tile reaches all the way to the bottom
-    // The denominator is slightly larger to ensure the tile goes past the hit line
-    return 1 - (hitTime / (fallDuration - 0.2));
-  };
-
   return (
     <motion.div
       ref={tileRef}
@@ -184,7 +179,7 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
         width: laneWidth - 8,
         height: getTileHeight(),
         x: 4,
-        y: `calc(${startPosition}% + ${getAnimationProgress() * (endPosition - startPosition + 20)}%)`,
+        y: startPosition + (getAnimationProgress() * (endPosition - startPosition)),
         opacity: status === 'hit' ? 0 : 1,
       }}
       animate={
