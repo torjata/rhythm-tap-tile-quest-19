@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from 'react';
 import ReactPlayer from 'react-player/youtube';
 import GameLane from './GameLane';
@@ -37,7 +36,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
   } = useGameStore();
 
   useEffect(() => {
-    // Calculate dimensions
     const calculateDimensions = () => {
       if (gameBoardRef.current) {
         const boardWidth = gameBoardRef.current.clientWidth;
@@ -51,7 +49,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
     return () => window.removeEventListener('resize', calculateDimensions);
   }, []);
 
-  // Game loop to update current time
   useEffect(() => {
     let animationFrameId: number;
     
@@ -105,7 +102,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
 
   return (
     <div className="w-full h-full flex flex-col items-center">
-      {/* Hidden YouTube player */}
       <div className="invisible absolute" style={{ width: '1px', height: '1px', overflow: 'hidden' }}>
         <ReactPlayer
           ref={playerRef}
@@ -115,23 +111,19 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
           width="1px"
           height="1px"
           config={{
-            youtube: {
-              playerVars: {
-                start: 0,
-                disablekb: 1,
-              },
+            playerVars: {
+              start: 0,
+              disablekb: 1,
             },
           }}
         />
       </div>
       
-      {/* Game title and song info */}
       <div className="mb-4 text-center">
         <h1 className="text-2xl font-bold text-white">{beatmap.title}</h1>
         <p className="text-lg text-gray-300">{beatmap.artist}</p>
       </div>
       
-      {/* Game stats display */}
       <div className="w-full flex justify-between items-center mb-2 px-4">
         <div className="text-white font-bold">
           Score: {Math.floor(score)}
@@ -149,16 +141,13 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
         </div>
       </div>
       
-      {/* Game board */}
       <div 
         ref={gameBoardRef} 
         className="w-full relative bg-game-darkpurple bg-opacity-80 rounded-lg overflow-hidden"
         style={{ height: `${boardHeight}px` }}
       >
-        {/* Hit line */}
         <div className="hit-line absolute bottom-12 w-full"></div>
         
-        {/* Lanes */}
         <div className="flex h-full">
           {Array.from({ length: COLUMNS }).map((_, index) => (
             <GameLane
@@ -173,7 +162,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
           ))}
         </div>
         
-        {/* Hit area indicators */}
         <div className="absolute bottom-0 w-full flex">
           {Array.from({ length: COLUMNS }).map((_, index) => (
             <div 
@@ -186,7 +174,6 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
           ))}
         </div>
         
-        {/* Start button overlay */}
         {!isPlaying && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <motion.button
