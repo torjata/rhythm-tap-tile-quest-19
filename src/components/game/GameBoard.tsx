@@ -95,7 +95,7 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
       setTimeout(() => {
         setIsGameOver(true);
         setGameEnded(true);
-      }, 2000); // 2 second delay before showing game over screen
+      }, 500); // 0.5 second delay before showing game over screen
     }
   }, [currentTime, isPlaying, beatmap.tiles, setIsGameOver, gameEnded]);
 

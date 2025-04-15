@@ -3,6 +3,12 @@ export type TileType = 'tap' | 'hold' | 'flick';
 export type FlickDirection = 'up' | 'down' | 'left' | 'right';
 export type HitAccuracy = 'perfect' | 'good' | 'miss';
 
+export interface GameAction {
+  type: 'perfect' | 'streak';
+  timestamp: number;
+  value?: number;
+}
+
 export interface Tile {
   id: string;
   type: TileType;
@@ -32,6 +38,7 @@ export interface GameState {
   isPaused: boolean;
   isGameOver: boolean;
   currentTime: number;
+  lastAction?: GameAction;
   setScore: (score: number) => void;
   incrementCombo: () => void;
   resetCombo: () => void;

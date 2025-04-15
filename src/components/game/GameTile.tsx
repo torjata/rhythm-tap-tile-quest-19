@@ -18,9 +18,9 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
   const hasBeenMissedRef = useRef(false);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   
-  const startPosition = -20; // Start above screen
-  const endPosition = window.innerHeight - 100; // End at bottom of viewport
-  const hitLinePosition = window.innerHeight - 120; // Hit line position
+  const startPosition = -20;
+  const endPosition = window.innerHeight - 100;
+  const hitLinePosition = window.innerHeight - 120;
   
   useEffect(() => {
     if (status === 'falling' && hitTime <= -0.3 && !hasBeenMissedRef.current) {
@@ -31,9 +31,8 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
   }, [hitTime, status, tile.id, onHit]);
 
   const calculateAccuracy = (time: number): HitAccuracy => {
-    const perfectThreshold = 0.08; // Tighter perfect window
-    const goodThreshold = 0.15; // Tighter good window
-    
+    const perfectThreshold = 0.08;
+    const goodThreshold = 0.15;
     const absTime = Math.abs(time);
     
     if (absTime <= perfectThreshold) {
@@ -65,7 +64,7 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
     const touch = e.touches[0];
     const deltaX = touch.clientX - touchStartRef.current.x;
     const deltaY = touch.clientY - touchStartRef.current.y;
-    const minSwipeDistance = 20; // Reduced minimum distance for a swipe to make it easier
+    const minSwipeDistance = 20;
     
     if (Math.abs(deltaX) > minSwipeDistance || Math.abs(deltaY) > minSwipeDistance) {
       const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY);
@@ -141,7 +140,7 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
 
   const getTileHeight = () => {
     if (tile.type === 'hold' && tile.duration) {
-      return Math.max(60, tile.duration * 200); // Increased height multiplier
+      return Math.max(60, tile.duration * 200);
     }
     return 60;
   };
@@ -149,7 +148,6 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
   const getAnimationProgress = () => {
     if (hitTime > fallDuration) return 0;
     if (hitTime <= -0.3) return 1;
-    
     return 1 - (hitTime / fallDuration);
   };
 
@@ -172,18 +170,25 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
     <motion.div
       ref={tileRef}
       className={getTileClassNames()}
+      animate={
+        status === 'hit'
+          ? { 
+              opacity: 0, 
+              scale: 1.3,
+              filter: 'brightness(1.5)',
+              transition: { duration: 0.2 } 
+            }
+          : undefined
+      }
       style={{
         width: laneWidth - 8,
         height: getTileHeight(),
         x: 4,
         y: startPosition + (getAnimationProgress() * (endPosition - startPosition)),
-        opacity: status === 'hit' ? 0 : 1,
+        background: `linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.3))`,
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
       }}
-      animate={
-        status === 'hit'
-          ? { opacity: 0, scale: 1.3, transition: { duration: 0.2 } }
-          : {}
-      }
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

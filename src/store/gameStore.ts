@@ -18,9 +18,11 @@ export const useGameStore = create<GameState>((set) => ({
   
   incrementCombo: () => set((state) => {
     const newCombo = state.combo + 1;
+    const isStreakMilestone = newCombo > 0 && newCombo % 10 === 0;
     return { 
       combo: newCombo, 
-      maxCombo: newCombo > state.maxCombo ? newCombo : state.maxCombo 
+      maxCombo: newCombo > state.maxCombo ? newCombo : state.maxCombo,
+      lastAction: isStreakMilestone ? { type: 'streak', value: newCombo, timestamp: Date.now() } : state.lastAction
     };
   }),
   
@@ -28,7 +30,8 @@ export const useGameStore = create<GameState>((set) => ({
   
   incrementPerfect: () => set((state) => ({ 
     perfect: state.perfect + 1,
-    score: state.score + 100 * (1 + state.combo * 0.1)
+    score: state.score + 100 * (1 + state.combo * 0.1),
+    lastAction: { type: 'perfect', timestamp: Date.now() }
   })),
   
   incrementGood: () => set((state) => ({ 
