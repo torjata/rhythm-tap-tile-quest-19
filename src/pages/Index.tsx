@@ -3,7 +3,7 @@ import GameBoard from '@/components/game/GameBoard';
 import { busBeatmap } from '@/data/beatmap';
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/store/gameStore';
-import { Home, Star, PlayCircle, Trophy, RotateCcw } from 'lucide-react';
+import { PlayCircle } from 'lucide-react';
 
 const Index = () => {
   const [gameStarted, setGameStarted] = useState(false);
@@ -172,67 +172,12 @@ const Index = () => {
           </motion.h1>
           
           <motion.div
-            className="text-6xl md:text-7xl font-bold text-[#1EAEDB] text-center mb-4 tracking-tight leading-none"
+            className="text-6xl md:text-7xl font-bold text-[#1EAEDB] text-center mb-12 tracking-tight leading-none"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
-            <span 
-              className="text-[#1EAEDB] font-bold" 
-              style={{ fontFamily: 'cursive' }}
-            >
-              I SHINE
-            </span>
-          </motion.div>
-          
-          <motion.div 
-            className="text-[#1EAEDB] text-xl text-center mb-8"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            <motion.span 
-              className="px-4 py-1 border-t border-b border-[#1EAEDB]"
-              animate={{ 
-                borderColor: ['rgba(30, 174, 219, 0.5)', 'rgba(30, 174, 219, 1)', 'rgba(30, 174, 219, 0.5)'],
-              }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            >
-              JAPANESE VERSION
-            </motion.span>
-          </motion.div>
-          
-          {/* Now we'll use an animated gradient background instead of image */}
-          <motion.div 
-            className="w-full max-w-md rounded-lg overflow-hidden mb-10 relative"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            <motion.div 
-              className="aspect-video w-full rounded-lg flex items-center justify-center"
-              style={{ 
-                background: 'linear-gradient(45deg, #1EAEDB, #C5F82A)',
-                boxShadow: '0 10px 30px rgba(30, 174, 219, 0.3)'
-              }}
-              animate={{ 
-                background: [
-                  'linear-gradient(45deg, #1EAEDB, #C5F82A)',
-                  'linear-gradient(45deg, #C5F82A, #ff6e3c)',
-                  'linear-gradient(45deg, #ff6e3c, #1EAEDB)',
-                  'linear-gradient(45deg, #1EAEDB, #C5F82A)'
-                ]
-              }}
-              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <motion.div 
-                className="text-4xl font-bold text-white"
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              >
-                B.U.S
-              </motion.div>
-            </motion.div>
+            <span className="text-[#1EAEDB] font-bold">I SHINE</span>
           </motion.div>
           
           {/* Start button with pulse animation */}
@@ -269,7 +214,7 @@ const Index = () => {
             </motion.div>
             TAP TO PLAY
           </motion.button>
-          
+
           {/* Footer instruction */}
           <motion.div 
             className="mt-10 text-center text-black opacity-70"
