@@ -179,97 +179,7 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
   };
 
   const renderDecorations = () => {
-    const decorations = [];
-    
-    // Add stars
-    for (let i = 0; i < 8; i++) {
-      decorations.push(
-        <motion.div 
-          key={`star-${i}`}
-          className="star"
-          animate={{ 
-            scale: [0.8, 1.2, 0.8], 
-            opacity: [0.3, 0.8, 0.3] 
-          }}
-          transition={{ 
-            repeat: Infinity, 
-            duration: Math.random() * 3 + 2,
-            delay: Math.random() * 3
-          }}
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            width: `${Math.random() * 10 + 5}px`,
-            height: `${Math.random() * 10 + 5}px`,
-          }}
-        />
-      );
-    }
-    
-    // Add dots
-    for (let i = 0; i < 8; i++) {
-      decorations.push(
-        <motion.div 
-          key={`blue-dot-${i}`}
-          className="dot dot-blue"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0.2, 0.8, 0.2] }}
-          transition={{ 
-            repeat: Infinity,
-            duration: Math.random() * 4 + 3,
-            delay: Math.random() * 2
-          }}
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            width: `${Math.random() * 8 + 5}px`,
-            height: `${Math.random() * 8 + 5}px`,
-          }}
-        />
-      );
-      
-      decorations.push(
-        <motion.div 
-          key={`orange-dot-${i}`}
-          className="dot dot-orange"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0.2, 0.6, 0.2] }}
-          transition={{ 
-            repeat: Infinity,
-            duration: Math.random() * 4 + 3,
-            delay: Math.random() * 2 + 1
-          }}
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            width: `${Math.random() * 8 + 5}px`,
-            height: `${Math.random() * 8 + 5}px`,
-          }}
-        />
-      );
-
-      decorations.push(
-        <motion.div 
-          key={`green-dot-${i}`}
-          className="dot dot-green"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0.2, 0.7, 0.2] }}
-          transition={{ 
-            repeat: Infinity,
-            duration: Math.random() * 4 + 3,
-            delay: Math.random() * 2 + 0.5
-          }}
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            width: `${Math.random() * 8 + 5}px`,
-            height: `${Math.random() * 8 + 5}px`,
-          }}
-        />
-      );
-    }
-    
-    return decorations;
+    return []; // Remove all decorations
   };
 
   // Calculate the total number of notes in the beatmap
@@ -363,14 +273,11 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
         className="w-full flex-grow relative bg-white"
         style={{ height: `${boardHeight}px` }}
       >
-        {/* Decorative elements */}
-        <div className="absolute inset-0 overflow-hidden opacity-30 pointer-events-none">
-          {renderDecorations()}
-        </div>
+        {/* Decorative elements removed */}
         
         {/* Game title */}
         <div className="absolute top-4 left-0 right-0 text-center pointer-events-none">
-          <h2 className="text-lg font-bold text-[#1EAEDB] opacity-40">
+          <h2 className="text-lg font-bold text-[#1EAEDB]">
             {beatmap.title}
           </h2>
         </div>
@@ -511,7 +418,7 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
         
         {/* Tutorial overlay */}
         {!isPlaying && showTutorial && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-white to-blue-50 bg-opacity-95 z-50">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-95 z-50">
             <motion.h3 
               className="text-2xl font-bold text-[#1EAEDB] mb-8"
               initial={{ y: -20, opacity: 0 }}
@@ -576,7 +483,7 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
         
         {/* Loading overlay */}
         {isLoading && (
-          <div className="loading-overlay bg-gradient-to-b from-white to-blue-50">
+          <div className="loading-overlay bg-white">
             <motion.div 
               className="flex flex-col items-center"
               initial={{ opacity: 0 }}
