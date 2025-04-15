@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GameTile from './GameTile';
@@ -55,32 +54,32 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isPressed || !laneRef.current) return;
-    
-    const touch = e.touches[0];
-    const rect = laneRef.current.getBoundingClientRect();
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
-    
-    // Calculate trail angle based on touch movement
-    const movementX = e.touches[0].clientX - e.touches[0].pageX + window.scrollX;
-    const movementY = e.touches[0].clientY - e.touches[0].pageY + window.scrollY;
-    const rotation = Math.atan2(movementY, movementX) * (180 / Math.PI);
-    const trailLength = Math.sqrt(movementX * movementX + movementY * movementY) + 20;
-    
-    const trail = {
-      id: `trail-${Date.now()}`,
-      x,
-      y,
-      rotation,
-      width: trailLength
-    };
-    
-    setSwipeTrails(prev => [...prev, trail]);
-    
-    setTimeout(() => {
-      setSwipeTrails(prev => prev.filter(t => t.id !== trail.id));
-    }, 500);
+    if (laneRef.current) {
+      const touch = e.touches[0];
+      const rect = laneRef.current.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      
+      // Calculate trail angle based on touch movement
+      const movementX = e.touches[0].clientX - e.touches[0].pageX + window.scrollX;
+      const movementY = e.touches[0].clientY - e.touches[0].pageY + window.scrollY;
+      const rotation = Math.atan2(movementY, movementX) * (180 / Math.PI);
+      const trailLength = Math.sqrt(movementX * movementX + movementY * movementY) + 20;
+      
+      const trail = {
+        id: `trail-${Date.now()}`,
+        x,
+        y,
+        rotation,
+        width: trailLength
+      };
+      
+      setSwipeTrails(prev => [...prev, trail]);
+      
+      setTimeout(() => {
+        setSwipeTrails(prev => prev.filter(t => t.id !== trail.id));
+      }, 500);
+    }
   };
 
   const handleTouchEnd = () => {
