@@ -47,6 +47,17 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
     onHit(tileId, accuracy);
   };
 
+  const getEffectColor = (accuracy: HitAccuracy) => {
+    switch (accuracy) {
+      case 'perfect':
+        return 'rgba(197, 248, 42, 0.8)';
+      case 'good':
+        return 'rgba(30, 174, 219, 0.8)';
+      case 'miss':
+        return 'rgba(255, 110, 60, 0.5)';
+    }
+  };
+
   return (
     <div className="lane relative h-full" style={{ width: `${width}px` }}>
       {/* Display active tiles */}
@@ -68,7 +79,7 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
         {hitEffects.map(effect => (
           <motion.div
             key={effect.id}
-            className={`absolute bottom-12 left-0 right-0 text-center font-bold text-xl z-10 ${effect.accuracy}`}
+            className={`absolute bottom-20 left-0 right-0 text-center font-bold text-xl z-10 ${effect.accuracy}`}
             initial={{ opacity: 0, y: 0 }}
             animate={{ opacity: 1, y: -20 }}
             exit={{ opacity: 0 }}
@@ -80,6 +91,10 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
             {effect.accuracy !== 'miss' && (
               <motion.div
                 className="hit-effect"
+                style={{ 
+                  backgroundColor: getEffectColor(effect.accuracy),
+                  boxShadow: `0 0 15px ${getEffectColor(effect.accuracy)}`
+                }}
                 initial={{ opacity: 0.8, scale: 0.5, width: width - 10, height: width - 10, x: 5, y: 30 }}
                 animate={{ opacity: 0, scale: 1.5 }}
                 transition={{ duration: 0.5 }}

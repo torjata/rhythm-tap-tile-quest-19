@@ -4,6 +4,7 @@ import GameBoard from '@/components/game/GameBoard';
 import { busBeatmap } from '@/data/beatmap';
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/store/gameStore';
+import { Fullscreen, PlayCircle } from 'lucide-react';
 
 const Index = () => {
   const [gameStarted, setGameStarted] = useState(false);
@@ -14,77 +15,202 @@ const Index = () => {
     setGameStarted(true);
   };
 
+  // Generate random decorative elements (dots and stars)
+  const generateDecorations = () => {
+    const decorations = [];
+    
+    // Add stars
+    for (let i = 0; i < 12; i++) {
+      const size = Math.random() * 10 + 5;
+      decorations.push(
+        <motion.div
+          key={`star-${i}`}
+          className="star"
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: [0.3, 0.8, 0.3],
+            scale: [0.8, 1.2, 0.8]
+          }}
+          transition={{ 
+            duration: Math.random() * 3 + 2,
+            repeat: Infinity,
+            delay: Math.random() * 2
+          }}
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            width: size,
+            height: size
+          }}
+        />
+      );
+    }
+    
+    // Add blue dots
+    for (let i = 0; i < 10; i++) {
+      const size = Math.random() * 8 + 5;
+      decorations.push(
+        <motion.div
+          key={`blue-dot-${i}`}
+          className="dot dot-blue"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.8 }}
+          transition={{ 
+            duration: 0.5,
+            delay: Math.random() * 1
+          }}
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            width: size,
+            height: size
+          }}
+        />
+      );
+    }
+    
+    // Add orange dots
+    for (let i = 0; i < 8; i++) {
+      const size = Math.random() * 8 + 5;
+      decorations.push(
+        <motion.div
+          key={`orange-dot-${i}`}
+          className="dot dot-orange"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.8 }}
+          transition={{ 
+            duration: 0.5,
+            delay: Math.random() * 1 + 0.5
+          }}
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            width: size,
+            height: size
+          }}
+        />
+      );
+    }
+    
+    return decorations;
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gradient-game">
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Decorative elements */}
+      {generateDecorations()}
+      
       {!gameStarted ? (
         <motion.div 
-          className="h-screen w-full flex flex-col items-center justify-center p-4"
+          className="h-screen w-full flex flex-col items-center justify-center p-4 relative z-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
+          {/* Japanese characters in green */}
+          <motion.h2
+            className="text-[#C5F82A] font-bold text-4xl mb-2 tracking-wider"
+            initial={{ y: -30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+          >
+            ビコーズ
+          </motion.h2>
+          
           {/* Title */}
           <motion.h1 
-            className="text-4xl md:text-5xl font-bold text-white text-center mb-6"
-            initial={{ y: -20 }}
-            animate={{ y: 0 }}
+            className="text-[#1EAEDB] text-5xl md:text-6xl font-bold text-center mb-2 tracking-tight leading-none"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            Rhythm Tap Tile Quest
+            BECAUSE OF YOU,
           </motion.h1>
           
-          {/* Song info */}
-          <motion.div 
-            className="mb-8 text-center"
-            initial={{ y: -20 }}
-            animate={{ y: 0 }}
+          {/* Subtitle */}
+          <motion.div
+            className="text-6xl md:text-7xl font-bold text-[#1EAEDB] text-center mb-4 tracking-tight leading-none"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
-            <h2 className="text-2xl font-bold text-white">BUS</h2>
-            <p className="text-xl text-white opacity-80">Because of You, I Shine</p>
-            <p className="text-white opacity-60">Japanese Version</p>
+            <span className="text-[#1EAEDB] font-bold" style={{ fontFamily: 'cursive' }}>I SHINE</span>
+          </motion.div>
+          
+          <motion.div 
+            className="text-[#1EAEDB] text-xl text-center mb-8"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <span className="px-4 py-1 border-t border-b border-[#1EAEDB]">JAPANESE VERSION</span>
           </motion.div>
           
           {/* Image */}
           <motion.div 
-            className="w-full max-w-md rounded-lg overflow-hidden mb-8"
+            className="w-full max-w-md rounded-lg overflow-hidden mb-10 relative"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
           >
             <img 
-              src="/lovable-uploads/2791945b-2be5-43d4-ae3e-7f0987314bfd.png" 
+              src="/lovable-uploads/69f2a492-c17a-4039-8a48-5ab862e93c3e.png" 
               alt="BUS - Because of You, I Shine" 
               className="w-full h-auto"
             />
+            <div className="absolute inset-0 border-2 border-[#C5F82A] rounded-lg"></div>
           </motion.div>
           
           {/* Start button */}
           <motion.button
-            className="bg-game-green text-black font-bold text-xl px-10 py-4 rounded-full shadow-lg hover:shadow-xl"
+            className="bg-[#C5F82A] text-black font-bold text-2xl px-12 py-5 rounded-full shadow-lg hover:shadow-xl flex items-center gap-3"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleStartGame}
           >
+            <PlayCircle size={28} />
             TAP TO PLAY
           </motion.button>
           
-          {/* Instructions */}
+          {/* Footer instruction */}
           <motion.div 
-            className="mt-8 text-center text-white opacity-70"
+            className="mt-10 text-center text-black opacity-70"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
+            transition={{ delay: 0.9, duration: 0.5 }}
           >
-            <p>Tap, hold, and flick the falling tiles in rhythm with the music</p>
+            <p className="text-lg">Tap, hold, and flick the falling tiles in rhythm with the music</p>
             <p className="text-sm mt-2">Optimized for mobile and tablet devices</p>
+            
+            <div className="mt-6 flex justify-center space-x-4">
+              <div className="flex flex-col items-center">
+                <div className="w-10 h-10 bg-[#1EAEDB] rounded-md mb-1 flex items-center justify-center">
+                  <span className="text-white font-bold">Tap</span>
+                </div>
+                <span className="text-xs">Tap once</span>
+              </div>
+              
+              <div className="flex flex-col items-center">
+                <div className="w-10 h-10 bg-[#C5F82A] rounded-md mb-1 flex items-center justify-center">
+                  <span className="text-black font-bold">Hold</span>
+                </div>
+                <span className="text-xs">Press & hold</span>
+              </div>
+              
+              <div className="flex flex-col items-center">
+                <div className="w-10 h-10 bg-[#ff6e3c] rounded-md mb-1 flex items-center justify-center">
+                  <span className="text-white font-bold">Flick</span>
+                </div>
+                <span className="text-xs">Swipe direction</span>
+              </div>
+            </div>
           </motion.div>
         </motion.div>
       ) : (
-        <div className="w-full h-screen max-w-lg mx-auto pt-4">
+        <div className="fullscreen-game">
           <GameBoard beatmap={busBeatmap} />
         </div>
       )}
