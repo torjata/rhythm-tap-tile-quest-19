@@ -101,8 +101,6 @@
     @apply bg-white text-foreground;
     font-family: 'Poppins', sans-serif;
     overflow: hidden;
-    touch-action: manipulation;
-    -webkit-user-select: none;
     user-select: none;
   }
 }
@@ -293,4 +291,42 @@
   right: 10px;
   height: 40px;
   opacity: 0.8;
+}
+
+/* Game over screen styles */
+.game-over-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
+
+.grade-s {
+  color: #FFD700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.grade-a {
+  color: #1EAEDB;
+  text-shadow: 0 0 10px rgba(30, 174, 219, 0.6);
+}
+
+.grade-b {
+  color: #C5F82A;
+  text-shadow: 0 0 10px rgba(197, 248, 42, 0.6);
+}
+
+.grade-c {
+  color: #ff9e3c;
+  text-shadow: 0 0 10px rgba(255, 158, 60, 0.6);
+}
+
+.grade-d, .grade-f {
+  color: #ff6e3c;
+  text-shadow: 0 0 10px rgba(255, 110, 60, 0.6);
 }

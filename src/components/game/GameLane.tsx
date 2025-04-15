@@ -51,6 +51,9 @@ const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: Ga
       style={{ width: `${width}px` }}
       onTouchStart={() => setIsPressed(true)}
       onTouchEnd={() => setIsPressed(false)}
+      onMouseDown={() => setIsPressed(true)}
+      onMouseUp={() => setIsPressed(false)}
+      onMouseLeave={() => setIsPressed(false)}
     >
       <AnimatePresence>
         {activeTiles.map(tile => (

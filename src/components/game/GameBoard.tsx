@@ -6,7 +6,7 @@ import { BeatMap, HitAccuracy } from '@/types/game';
 import { useGameStore } from '@/store/gameStore';
 import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Loader, Home, Star, PlayCircle } from 'lucide-react';
+import { Loader, Home, Star, PlayCircle, Trophy, RotateCcw } from 'lucide-react';
 
 interface GameBoardProps {
   beatmap: BeatMap;
@@ -22,21 +22,29 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
   const [boardHeight, setBoardHeight] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);
+  const [gameEnded, setGameEnded] = useState(false);
   const isMobile = useIsMobile();
   
   const {
     score,
     combo,
+    maxCombo,
+    perfect,
+    good,
+    miss,
     isPlaying,
     isPaused,
     currentTime,
+    isGameOver,
     setCurrentTime,
     setIsPlaying,
+    setIsGameOver,
     incrementCombo,
     resetCombo,
     incrementPerfect,
     incrementGood,
     incrementMiss,
+    resetGame,
   } = useGameStore();
 
   useEffect(() => {
@@ -75,6 +83,21 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
       }
     };
   }, [isPlaying, isPaused, setCurrentTime]);
+
+  // Check if all tiles have been processed to trigger game over
+  useEffect(() => {
+    if (!isPlaying || gameEnded) return;
+    
+    const lastTileTime = Math.max(...beatmap.tiles.map(tile => tile.time));
+    
+    // If current time is past the last tile time + 2 seconds, end the game
+    if (currentTime > lastTileTime + 2) {
+      setTimeout(() => {
+        setIsGameOver(true);
+        setGameEnded(true);
+      }, 2000); // 2 second delay before showing game over screen
+    }
+  }, [currentTime, isPlaying, beatmap.tiles, setIsGameOver, gameEnded]);
 
   const handleStart = () => {
     setIsLoading(true);
@@ -122,6 +145,12 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
 
   const handleBackToMenu = () => {
     window.location.reload();
+  };
+
+  const handlePlayAgain = () => {
+    resetGame();
+    setGameEnded(false);
+    setShowTutorial(true);
   };
 
   const renderDecorations = () => {
@@ -174,6 +203,29 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
     }
     
     return decorations;
+  };
+
+  // Calculate the total number of notes in the beatmap
+  const totalNotes = beatmap.tiles.length;
+  
+  // Calculate accuracy percentage
+  const calculateAccuracy = () => {
+    if (totalNotes === 0) return 0;
+    
+    const weightedSum = perfect * 1 + good * 0.6;
+    return (weightedSum / totalNotes) * 100;
+  };
+  
+  // Get letter grade based on accuracy
+  const getGrade = () => {
+    const accuracy = calculateAccuracy();
+    
+    if (accuracy >= 95) return 'S';
+    if (accuracy >= 90) return 'A';
+    if (accuracy >= 80) return 'B';
+    if (accuracy >= 70) return 'C';
+    if (accuracy >= 60) return 'D';
+    return 'F';
   };
 
   return (
@@ -272,6 +324,89 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
           ))}
         </div>
         
+        {/* Game over screen */}
+        {isGameOver && gameEnded && (
+          <motion.div 
+            className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-95 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.div 
+              className="bg-white rounded-xl p-8 shadow-lg max-w-md w-full mx-4"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 bg-[#1EAEDB] rounded-full flex items-center justify-center">
+                  <Trophy size={40} className="text-white" />
+                </div>
+              </div>
+              
+              <h2 className="text-3xl font-bold text-center text-[#1EAEDB] mb-2">GAME CLEAR!</h2>
+              <h3 className="text-xl text-center mb-6">{beatmap.title}</h3>
+              
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="text-center">
+                  <p className="text-gray-500 text-sm">SCORE</p>
+                  <p className="text-2xl font-bold">{Math.floor(score)}</p>
+                </div>
+                
+                <div className="text-center">
+                  <p className="text-gray-500 text-sm">GRADE</p>
+                  <p className="text-2xl font-bold">{getGrade()}</p>
+                </div>
+                
+                <div className="text-center">
+                  <p className="text-gray-500 text-sm">MAX COMBO</p>
+                  <p className="text-xl font-bold">{maxCombo}x</p>
+                </div>
+                
+                <div className="text-center">
+                  <p className="text-gray-500 text-sm">ACCURACY</p>
+                  <p className="text-xl font-bold">{calculateAccuracy().toFixed(1)}%</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-2 mb-6">
+                <div className="text-center bg-[#C5F82A] bg-opacity-20 rounded-lg py-2">
+                  <p className="text-xs text-gray-600">PERFECT</p>
+                  <p className="font-bold">{perfect}</p>
+                </div>
+                
+                <div className="text-center bg-[#1EAEDB] bg-opacity-20 rounded-lg py-2">
+                  <p className="text-xs text-gray-600">GOOD</p>
+                  <p className="font-bold">{good}</p>
+                </div>
+                
+                <div className="text-center bg-[#ff6e3c] bg-opacity-20 rounded-lg py-2">
+                  <p className="text-xs text-gray-600">MISS</p>
+                  <p className="font-bold">{miss}</p>
+                </div>
+              </div>
+              
+              <div className="flex space-x-3">
+                <button 
+                  onClick={handleBackToMenu}
+                  className="flex-1 py-3 px-4 rounded-full border-2 border-[#1EAEDB] text-[#1EAEDB] font-bold flex items-center justify-center gap-2"
+                >
+                  <Home size={18} />
+                  HOME
+                </button>
+                
+                <button 
+                  onClick={handlePlayAgain}
+                  className="flex-1 py-3 px-4 rounded-full bg-[#C5F82A] text-black font-bold flex items-center justify-center gap-2"
+                >
+                  <RotateCcw size={18} />
+                  PLAY AGAIN
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+        
         {/* Tutorial overlay */}
         {!isPlaying && showTutorial && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-95">
@@ -321,7 +456,7 @@ const GameBoard = ({ beatmap }: GameBoardProps) => {
         )}
         
         {/* Start button if not in tutorial or loading */}
-        {!isPlaying && !showTutorial && !isLoading && (
+        {!isPlaying && !showTutorial && !isLoading && !gameEnded && (
           <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80">
             <motion.button
               whileHover={{ scale: 1.05 }}

@@ -57,8 +57,6 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
     if (tile.type === 'tap') {
       handleTap();
     }
-    
-    e.preventDefault();
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -86,15 +84,12 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
       
       touchStartRef.current = null;
     }
-    
-    e.preventDefault();
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (status !== 'falling' || tile.type !== 'hold') return;
     handleHold();
     touchStartRef.current = null;
-    e.preventDefault();
   };
 
   const handleTap = () => {
@@ -192,6 +187,11 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onClick={() => {
+        if (tile.type === 'tap') {
+          handleTap();
+        }
+      }}
     >
       {getTileContent()}
     </motion.div>
