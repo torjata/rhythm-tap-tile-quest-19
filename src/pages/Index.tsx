@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import GameBoard from '@/components/game/GameBoard';
 import { busBeatmap } from '@/data/beatmap';
@@ -14,9 +15,11 @@ const Index = () => {
     setGameStarted(true);
   };
 
+  // Generate random decorative elements (dots and stars)
   const generateDecorations = () => {
     const decorations = [];
     
+    // Add stars
     for (let i = 0; i < 12; i++) {
       const size = Math.random() * 10 + 5;
       decorations.push(
@@ -43,6 +46,7 @@ const Index = () => {
       );
     }
     
+    // Add blue dots
     for (let i = 0; i < 10; i++) {
       const size = Math.random() * 8 + 5;
       decorations.push(
@@ -65,6 +69,7 @@ const Index = () => {
       );
     }
     
+    // Add orange dots
     for (let i = 0; i < 8; i++) {
       const size = Math.random() * 8 + 5;
       decorations.push(
@@ -91,12 +96,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#2A2F3C] relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden opacity-20">
-        {generateDecorations()}
-        
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,...')] opacity-5"></div>
-      </div>
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Decorative elements */}
+      {generateDecorations()}
       
       {!gameStarted ? (
         <motion.div 
@@ -105,6 +107,7 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
+          {/* Japanese characters in green */}
           <motion.h2
             className="text-[#C5F82A] font-bold text-4xl mb-2 tracking-wider"
             initial={{ y: -30, opacity: 0 }}
@@ -114,6 +117,7 @@ const Index = () => {
             ビコーズ
           </motion.h2>
           
+          {/* Title */}
           <motion.h1 
             className="text-[#1EAEDB] text-5xl md:text-6xl font-bold text-center mb-2 tracking-tight leading-none"
             initial={{ y: -20, opacity: 0 }}
@@ -123,6 +127,7 @@ const Index = () => {
             BECAUSE OF YOU,
           </motion.h1>
           
+          {/* Subtitle */}
           <motion.div
             className="text-6xl md:text-7xl font-bold text-[#1EAEDB] text-center mb-4 tracking-tight leading-none"
             initial={{ scale: 0.9, opacity: 0 }}
@@ -141,8 +146,24 @@ const Index = () => {
             <span className="px-4 py-1 border-t border-b border-[#1EAEDB]">JAPANESE VERSION</span>
           </motion.div>
           
+          {/* Image */}
+          <motion.div 
+            className="w-full max-w-md rounded-lg overflow-hidden mb-10 relative"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            <img 
+              src="/lovable-uploads/69f2a492-c17a-4039-8a48-5ab862e93c3e.png" 
+              alt="BUS - Because of You, I Shine" 
+              className="w-full h-auto"
+            />
+            <div className="absolute inset-0 border-2 border-[#C5F82A] rounded-lg"></div>
+          </motion.div>
+          
+          {/* Start button */}
           <motion.button
-            className="bg-gradient-to-r from-[#C5F82A] to-[#9EF82A] text-black font-bold text-2xl px-12 py-5 rounded-full shadow-lg hover:shadow-xl flex items-center gap-3"
+            className="bg-[#C5F82A] text-black font-bold text-2xl px-12 py-5 rounded-full shadow-lg hover:shadow-xl flex items-center gap-3"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.7, duration: 0.5 }}
@@ -154,6 +175,7 @@ const Index = () => {
             TAP TO PLAY
           </motion.button>
           
+          {/* Footer instruction */}
           <motion.div 
             className="mt-10 text-center text-black opacity-70"
             initial={{ opacity: 0 }}
