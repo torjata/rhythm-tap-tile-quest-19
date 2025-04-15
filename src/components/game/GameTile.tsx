@@ -17,9 +17,12 @@ const GameTile = ({ tile, hitTime, onHit, fallDuration, laneWidth }: GameTilePro
   const tileRef = useRef<HTMLDivElement>(null);
   const startPosition = -100; // Starting position off-screen
   const touchStartRef = useRef<{ x: number, y: number } | null>(null);
+  const hasBeenMissedRef = useRef(false);
 
   useEffect(() => {
-    if (status === 'falling' && hitTime <= 0) {
+    // This prevents an infinite loop by only triggering the "miss" once
+    if (status === 'falling' && hitTime <= 0 && !hasBeenMissedRef.current) {
+      hasBeenMissedRef.current = true;
       setStatus('missed');
       onHit(tile.id, 'miss');
     }

@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GameTile from './GameTile';
 import { Tile, HitAccuracy } from '@/types/game';
@@ -16,15 +16,21 @@ interface GameLaneProps {
 const GameLane = ({ column, tiles, currentTime, onHit, fallDuration, width }: GameLaneProps) => {
   const [activeTiles, setActiveTiles] = useState<Tile[]>([]);
   const [hitEffects, setHitEffects] = useState<{ id: string; accuracy: HitAccuracy }[]>([]);
+  const prevTimeRef = useRef(currentTime);
 
   useEffect(() => {
-    // Filter tiles that should be visible based on time
-    const visibleTiles = tiles.filter(tile => {
-      const timeToHit = tile.time - currentTime;
-      return timeToHit > -0.5 && timeToHit < fallDuration;
-    });
-    
-    setActiveTiles(visibleTiles);
+    // Only update tiles if time has actually changed to prevent unnecessary rerenders
+    if (prevTimeRef.current !== currentTime) {
+      prevTimeRef.current = currentTime;
+      
+      // Filter tiles that should be visible based on time
+      const visibleTiles = tiles.filter(tile => {
+        const timeToHit = tile.time - currentTime;
+        return timeToHit > -0.5 && timeToHit < fallDuration;
+      });
+      
+      setActiveTiles(visibleTiles);
+    }
   }, [tiles, currentTime, fallDuration]);
 
   const handleHit = (tileId: string, accuracy: HitAccuracy) => {
